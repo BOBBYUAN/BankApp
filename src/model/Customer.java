@@ -26,7 +26,6 @@ public class Customer {
     }
 
     void SetPin(String OldPIN, String NewPIN) {
-
     }
 
     public String getName() {

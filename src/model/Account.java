@@ -12,6 +12,7 @@ public class Account {
     private ArrayList<Transaction> transactions;
     private String branch;
     private double balance;
+    private int status;
 
     public Account(long accountId, ArrayList<Transaction> transactions, String branch, double balance) {
         this.accountId = accountId;
@@ -51,4 +52,9 @@ public class Account {
     public void setBalance(double balance) {
         this.balance = balance;
     }
+
+    public int getStatus() { return status; }
+
+    public void setStatus(int status) { this.status = status; }
+
 }

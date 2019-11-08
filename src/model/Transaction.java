@@ -7,60 +7,41 @@ public class Transaction {
     private Date date;
     private double amount;
 
+    public Date getDate() { return date; }
 
-    public void dedposit() {
+    public void setDate(Date date) { this.date = date; }
 
+    public double getAmount() { return amount; }
+
+    public void setAmount(double amount) { this.amount = amount; }
+
+    public void dedposit(double money, long accountId) {
     }
 
-    public void top_up() {
-
+    public void top_up(double money, long accountId) {
     }
 
-    public void withdraw() {
-
+    public void withdraw(double money, long accountId) {
     }
 
-    public void purchase() {
-
+    public void purchase(double money, long accountId) {
     }
 
-    public void transfer() {
-
+    public void transfer(double money, long fromAccountId, String toAccountId) {
     }
 
-    public void collect() {
-
+    public void collect(double money, long accountId) {
     }
 
-    public void pay_friend() {
-
+    public void pay_friend(double money, long fromAccountId, long toAccountId) {
     }
 
-    public void wire() {
-
+    public void wire(double money, long fromAccountId, long toAccountId) {
     }
 
-    public void wire_check() {
-
+    public void wire_check(double money, long accountId) {
     }
 
     public void accure_interest() {
-
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
     }
 }
