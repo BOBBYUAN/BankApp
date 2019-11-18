@@ -41,7 +41,7 @@ public class Transaction {
 
     public void wire_check(double money, long accountId) {
     }
-
     public void accure_interest() {
+
     }
 }
