@@ -52,8 +52,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##YoutNetID";
-		final String DB_PASSWORD = "YourPassword";
+		final String DB_USER = "c##wangcheng";
+		final String DB_PASSWORD = "7429699";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();

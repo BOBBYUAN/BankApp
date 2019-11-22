@@ -14,3 +14,11 @@ To Set up Oracle database:
          private network
 
 Also, it would be convenient and clear to use SQLDeveloper, the username, password and url would be the same
+
+To compile and run the program
+1. Connect to database either using VPN or on csil machine
+2. javac javac -d out/ -cp <actual path>/ojdbc8.jar cs174a/*.java
+3. java -cp <actual path>/ojdbc8.jar:out:. cs174a.Main
+
+*. <actual path> would be same path above
+*. The password and username would be the same in the sample datasource.java
