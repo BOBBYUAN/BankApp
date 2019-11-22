@@ -1,4 +1,4 @@
-package model;
+package cs174a;
 
 import java.util.HashSet;
 

@@ -1,1 +1,16 @@
 CS174 Group Project
+
+To Set up Oracle database:
+1. In csil, follow the instruction posted on piazza
+
+2. In local computer:
+    (1). Download 19.3.0.0.0 Oracle Driver
+    (2). Import the ocjdb8.jar into External Libraries
+    (3). do command: javac -classpath <ACTUAL PATH>:. DataSourceSample.java AND
+                     java -classpath <ACTUAL PATH>:. DataSourceSample
+         * <ACTUAL PATH> would be the path where you download the ocjdb8.jar
+         e.x., mine is /Users/BOB/Desktop/ojdbc8-full/ojdbc8.jar
+    *(4). Each time connecting to database, you need to use UCSB Pulse Secure VPN to connect to the
+         private network
+
+Also, it would be convenient and clear to use SQLDeveloper, the username, password and url would be the same

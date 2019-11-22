@@ -1,4 +1,4 @@
-// You may have as many imports as you need.
+package cs174a;// You may have as many imports as you need.
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;

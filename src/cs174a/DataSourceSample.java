@@ -1,4 +1,4 @@
-/* Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.*/
+package cs174a;/* Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.*/
 /*
    DESCRIPTION
    The code sample shows how to use the DataSource API to establish a connection

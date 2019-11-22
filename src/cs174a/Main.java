@@ -1,4 +1,4 @@
-// DO NOT REMOVE THIS IMPORT.
+package cs174a;// DO NOT REMOVE THIS IMPORT.
 import cs174a.Testable.*;
 
 /**

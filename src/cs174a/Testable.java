@@ -1,4 +1,4 @@
-/*
+package cs174a;/*
  * CS174A Project Test Class.
  * Crated by Im YoungMin on October 29, 2019.
  */
