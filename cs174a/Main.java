@@ -1,6 +1,6 @@
 package cs174a;// DO NOT REMOVE THIS IMPORT.
 import cs174a.Testable.*;
-
+import java.util.Scanner;
 /**
  * This is the class that launches your application.
  * DO NOT CHANGE ITS NAME.
@@ -18,19 +18,28 @@ public class Main
 	//!### COMENZAMOS
 	public static void main( String[] args )
 	{
+
 		App app = new App();                        // We need the default constructor of your App implementation.  Make sure such
 													// constructor exists.
 		String r = app.initializeSystem();          // We'll always call this function before testing your system.
+
+
+
 		if( r.equals( "0" ) )
 		{
-			app.exampleAccessToDB();                // Example on how to connect to the DB.
+			//app.exampleAccessToDB();                // Example on how to connect to the DB.
+//			r = app.createTables();
+//			System.out.println( r );
+
+//			r = app.dropTables();
+//			System.out.println( r );
 
 			// Example tests.  We'll overwrite your Main.main() function with our final tests.
 			r = app.listClosedAccounts();
 			System.out.println( r );
 
 			// Another example test.
-			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "account1", 1234.56, "theTaxID", "Im YoungMing", "Known" );
+			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "1", 1234.56, "10", "Im YoungMing", "Known" );
 			System.out.println( r );
 		}
 	}
