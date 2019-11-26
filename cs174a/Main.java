@@ -43,8 +43,11 @@ public class Main
 //			System.out.println( r );
 //			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "1221", 1234.56, "54", "adfasdf", "Known" );
 //			System.out.println( r );
-			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
-			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
+//			System.out.println( r );
+
+			r = app.deposit("34",10.00);
+			System.out.println(r);
 		}
 	}
 	//!### FINALIZAMOS

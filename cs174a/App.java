@@ -279,7 +279,7 @@ public class App implements Testable
 			//resultSet = statement.executeQuery("create table Account(aid integer,cid integer,branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))" );
 			//resultSet = statement.executeQuery("create table CheckingAccount(aid integer,primary key(aid),foreign key(aid) references Account(aid) on delete cascade)" );
 			//resultSet = statement.executeQuery("create table Transaction(tid integer,cid integer,aid integer,testId date,info varchar(20),type varchar(20),primary key(tid),foreign key(cid) references Customer(cid),foreign key(aid) references Account(aid))" );
-			return "successfully creates the table!";
+			return "0";
 //			try( statement.executeBatch() )
 //			{
 //				return "successfully creates the table!";
@@ -289,10 +289,11 @@ public class App implements Testable
 		catch( SQLException e )
 		{
 			System.err.println( e.getMessage() );
-			return "not successful!";
+			return "1";
 		}
 	}
 
+	@Override
 	public String dropTables() {
 		try( Statement statement = _connection.createStatement() )
 		{
@@ -315,14 +316,57 @@ public class App implements Testable
 			resultSet = statement.executeQuery("drop table Account");
 			resultSet = statement.executeQuery("drop table Customer");
 
-			return "successfully drops the table!";
+			return "0";
 
 		}
 		catch( SQLException e )
 		{
 			System.err.println( e.getMessage() );
-			return "not successful!";
+			return "1";
 		}
+	}
+
+	@Override
+	public String deposit( String accountId, double amount ) {
+		double oldBalance = 0.0;
+		double newBalance = 0.0;
+		String result;
+		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+
+			String sql = "select savingaccount.balance from savingaccount where savingaccount.aid = ? UNION\n" +
+					"select studentcheckingaccount.balance from studentcheckingaccount where studentcheckingaccount.aid = ? UNION\n" +
+					"select interestcheckingaccount.balance from interestcheckingaccount where interestcheckingaccount.aid = ?";
+			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
+			preparedStatement.setString(1,accountId);
+			preparedStatement.setString(2,accountId);
+			preparedStatement.setString(3,accountId);
+
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			while( resultSet.next() ) {
+				oldBalance = resultSet.getDouble("balance");
+				newBalance = oldBalance - amount;
+			}
+
+			if (newBalance < 0) {
+				return "1 " + oldBalance + " " + oldBalance;
+			} else if (newBalance == 0.00 || newBalance == 0.01) {
+				//add in to closed account
+				return "0 " + oldBalance + " " + newBalance;
+			} else {
+				//update?
+				//resultSet.updateDouble("balance",newBalance);
+				return "0 " + oldBalance + " " + newBalance;
+			}
+
+		}
+		catch( SQLException e )
+		{
+			System.err.println( e.getMessage() );
+			return "1";
+		}
+
 	}
 
 }
