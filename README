@@ -22,3 +22,6 @@ To compile and run the program
 
 *. <actual path> would be same path above
 *. The password and username would be the same in the sample datasource.java
+
+*. Glennies command: javac -d out/ -cp /Users/glennierousseva/Downloads/ojdbc8-full/ojdbc8.jar cs174a/*.java
+*.                   java -cp /Users/glennierousseva/Downloads/ojdbc8-full/ojdbc8.jar:out:. cs174a.Main
