@@ -41,13 +41,13 @@ public class Main
 			// Another example test.
 //			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "7", 1234.56, "12", "adfasdf", "Known" );
 //			System.out.println( r );
-//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "1221", 1234.56, "54", "adfasdf", "Known" );
+			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "1221", 1234.56, "54", "adfasdf", "Known" );
+			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
 //			System.out.println( r );
-//			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
-//			System.out.println( r );
-
-			r = app.deposit("34",10.00);
-			System.out.println(r);
+//
+//			r = app.deposit("1221",10.00);
+//			System.out.println(r);
 		}
 	}
 	//!### FINALIZAMOS

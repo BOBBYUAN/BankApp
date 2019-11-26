@@ -185,13 +185,16 @@ public class App implements Testable
 				preparedStatement.setString(4, "17127");
 				preparedStatement.executeQuery();
 
-				String sql2 = "insert into interestcheckingaccount (aid,cid,branch_name,balance,interest) values (?,?,?,?,?)";
+
+				String sql2 = "insert into account (aid,cid,branch_name,balance,type,interest,status) values (?,?,?,?,?,?,?)";
 				preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
-				preparedStatement.setFloat(5, 0.15f);
+				preparedStatement.setString(5, "INTEREST_CHECKING");
+				preparedStatement.setFloat(6, 0.15f);
+				preparedStatement.setInt(7, 0);
 				preparedStatement.executeQuery();
 
 
@@ -261,18 +264,19 @@ public class App implements Testable
 
 
 			String s1 = "create table Customer(cid varchar(20),cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))";
-			String s2 = "create table Account(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
-			String s3 = "create table StudentCheckingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
-			String s4 = "create table InterestCheckingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
-			String s5 = "create table SavingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
-			String s6 = "create table Transaction(tid integer,cid varchar(20),aid integer,testId date,info varchar(20),type varchar(20),primary key(tid),foreign key(cid) references Customer(cid),foreign key(aid) references Account(aid))";
+			String s2 =  "create table Account(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),type varchar(20), interest float, status integer, primary key(aid),foreign key(cid) references Customer(cid))";
+			//String s2 = "create table Account(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
+			//String s3 = "create table StudentCheckingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
+			//String s4 = "create table InterestCheckingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,sprimary key(aid),foreign key(cid) references Customer(cid))";
+			//String s5 = "create table SavingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
+			//String s6 = "create table Transaction(tid integer,cid varchar(20),aid integer,testId date,info varchar(20),type varchar(20),primary key(tid),foreign key(cid) references Customer(cid),foreign key(aid) references Account(aid))";
 
 			statement.addBatch(s1);
 			statement.addBatch(s2);
-			statement.addBatch(s3);
-			statement.addBatch(s4);
-			statement.addBatch(s5);
-			statement.addBatch(s6);
+//			statement.addBatch(s3)
+//			statement.addBatch(s4);
+//			statement.addBatch(s5);
+//			statement.addBatch(s6);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
@@ -309,11 +313,11 @@ public class App implements Testable
 //			statement.addBatch(s4);
 //
 //			statement.executeBatch();
-			ResultSet resultSet = statement.executeQuery("drop table Transaction");
-			resultSet = statement.executeQuery("drop table SavingAccount");
-			resultSet = statement.executeQuery("drop table StudentCheckingAccount");
-			resultSet = statement.executeQuery("drop table InterestCheckingAccount");
-			resultSet = statement.executeQuery("drop table Account");
+			//ResultSet resultSet = statement.executeQuery("drop table Transaction");
+//			resultSet = statement.executeQuery("drop table SavingAccount");
+//			resultSet = statement.executeQuery("drop table StudentCheckingAccount");
+//			resultSet = statement.executeQuery("drop table InterestCheckingAccount");
+			ResultSet resultSet = statement.executeQuery("drop table Account");
 			resultSet = statement.executeQuery("drop table Customer");
 
 			return "0";
@@ -331,34 +335,29 @@ public class App implements Testable
 		double oldBalance = 0.0;
 		double newBalance = 0.0;
 		String result;
-		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
-		{
+		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
 
-			String sql = "select savingaccount.balance from savingaccount where savingaccount.aid = ? UNION\n" +
-					"select studentcheckingaccount.balance from studentcheckingaccount where studentcheckingaccount.aid = ? UNION\n" +
-					"select interestcheckingaccount.balance from interestcheckingaccount where interestcheckingaccount.aid = ?";
+//			String sql = "select savingaccount.balance from savingaccount where savingaccount.aid = ? UNION\n" +
+//					"select studentcheckingaccount.balance from studentcheckingaccount where studentcheckingaccount.aid = ? UNION\n" +
+//					"select interestcheckingaccount.balance from interestcheckingaccount where interestcheckingaccount.aid = ?";
+
+			String sql = "select account.balance from account where account.aid = ?";
 			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
-			preparedStatement.setString(1,accountId);
-			preparedStatement.setString(2,accountId);
-			preparedStatement.setString(3,accountId);
+			preparedStatement.setString(1, accountId);
+			//preparedStatement.setString(2,accountId);
+			//preparedStatement.setString(3,accountId);
 
 			ResultSet resultSet = preparedStatement.executeQuery();
 
-			while( resultSet.next() ) {
+			while (resultSet.next()) {
 				oldBalance = resultSet.getDouble("balance");
-				newBalance = oldBalance - amount;
+				newBalance = oldBalance + amount;
 			}
 
-			if (newBalance < 0) {
-				return "1 " + oldBalance + " " + oldBalance;
-			} else if (newBalance == 0.00 || newBalance == 0.01) {
-				//add in to closed account
-				return "0 " + oldBalance + " " + newBalance;
-			} else {
-				//update?
-				//resultSet.updateDouble("balance",newBalance);
-				return "0 " + oldBalance + " " + newBalance;
-			}
+
+			resultSet.updateDouble("balance", newBalance);
+			return "0 " + oldBalance + " " + newBalance;
+
 
 		}
 		catch( SQLException e )
