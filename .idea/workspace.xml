@@ -5,19 +5,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cs174a/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/cs174a/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cs174a/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/cs174a/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cs174a/Testable.java" beforeDir="false" afterPath="$PROJECT_DIR$/cs174a/Testable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/cs174a/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/cs174a/App.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/cs174a/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/cs174a/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/cs174a/Testable.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/cs174a/Testable.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/DataSourceSample.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/model/Account.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/model/Customer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/model/InterestCheckingAccount.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/model/PocketAccount.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/model/SavingAccount.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/model/StudentCheckingAccount.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/BankApp/model/Transaction.class" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,11 +20,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="41" column="32" selection-start-line="41" selection-start-column="32" selection-end-line="41" selection-end-column="32" />
+            <state relative-caret-position="750">
+              <caret line="50" column="1" lean-forward="true" selection-start-line="50" selection-start-column="1" selection-end-line="50" selection-end-column="1" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -46,26 +35,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="109" column="44" selection-start-line="109" selection-start-column="44" selection-end-line="109" selection-end-column="44" />
+            <state relative-caret-position="386">
+              <caret line="73" column="55" selection-start-line="73" selection-start-column="55" selection-end-line="73" selection-end-column="55" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cs174a/SavingAccount.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cs174a/App.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-9">
-              <caret line="200" column="49" lean-forward="true" selection-start-line="200" selection-start-column="49" selection-end-line="200" selection-end-column="49" />
+            <state relative-caret-position="220">
+              <caret line="242" column="29" lean-forward="true" selection-start-line="242" selection-start-column="29" selection-end-line="242" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -111,10 +91,10 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="41" />
-    <option name="y" value="55" />
-    <option name="width" value="1280" />
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="x" value="-18" />
+    <option name="y" value="26" />
+    <option name="width" value="1094" />
     <option name="height" value="777" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -203,18 +183,18 @@
       <workItem from="1572029893876" duration="1456000" />
       <workItem from="1572361929794" duration="3205000" />
       <workItem from="1573240016220" duration="1799000" />
-      <workItem from="1574584258041" duration="17302000" />
+      <workItem from="1574584258041" duration="21774000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36314000" />
+    <option name="totallyTimeSpent" value="40786000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="41" y="55" width="1280" height="777" extended-state="0" />
+    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2819063" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23909532" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -231,7 +211,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32876712" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.28321168" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.36438355" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32868218" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -337,10 +317,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cs174a/App.java">
+    <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9">
-          <caret line="200" column="49" lean-forward="true" selection-start-line="200" selection-start-column="49" selection-end-line="200" selection-end-column="49" />
+        <state relative-caret-position="750">
+          <caret line="50" column="1" lean-forward="true" selection-start-line="50" selection-start-column="1" selection-end-line="50" selection-end-column="1" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -349,15 +329,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="109" column="44" selection-start-line="109" selection-start-column="44" selection-end-line="109" selection-end-column="44" />
+        <state relative-caret-position="386">
+          <caret line="73" column="55" selection-start-line="73" selection-start-column="55" selection-end-line="73" selection-end-column="55" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
+    <entry file="file://$PROJECT_DIR$/cs174a/App.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="41" column="32" selection-start-line="41" selection-start-column="32" selection-end-line="41" selection-end-column="32" />
+        <state relative-caret-position="220">
+          <caret line="242" column="29" lean-forward="true" selection-start-line="242" selection-start-column="29" selection-end-line="242" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

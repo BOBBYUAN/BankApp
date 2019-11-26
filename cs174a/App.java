@@ -177,10 +177,46 @@ public class App implements Testable
 		{
 
 			if (accountType == AccountType.INTEREST_CHECKING) {
-				result = "12";
+				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
+				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
+				preparedStatement.setString(1,tin);
+				preparedStatement.setString(2, name);
+				preparedStatement.setString(3, address);
+				preparedStatement.setString(4, "17127");
+				preparedStatement.executeQuery();
+
+				String sql2 = "insert into interestcheckingaccount (aid,cid,branch_name,balance,interest) values (?,?,?,?,?)";
+				preparedStatement = _connection.prepareStatement(sql2);
+				preparedStatement.setInt(1,Integer.parseInt(id));
+				preparedStatement.setString(2, tin);
+				preparedStatement.setString(3, "CHASE");
+				preparedStatement.setDouble(4, initialBalance);
+				preparedStatement.setFloat(5, 0.15f);
+				preparedStatement.executeQuery();
+
+
+				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
 
 			} else if (accountType == AccountType.STUDENT_CHECKING) {
-				result = "34";
+				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
+				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
+				preparedStatement.setString(1,tin);
+				preparedStatement.setString(2, name);
+				preparedStatement.setString(3, address);
+				preparedStatement.setString(4, "17127");
+				preparedStatement.executeQuery();
+
+				String sql2 = "insert into studentcheckingaccount (aid,cid,branch_name,balance,interest) values (?,?,?,?,?)";
+				preparedStatement = _connection.prepareStatement(sql2);
+				preparedStatement.setInt(1,Integer.parseInt(id));
+				preparedStatement.setString(2, tin);
+				preparedStatement.setString(3, "CHASE");
+				preparedStatement.setDouble(4, initialBalance);
+				preparedStatement.setFloat(5, 0.15f);
+				preparedStatement.executeQuery();
+
+
+				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
 			} else if (accountType == AccountType.SAVINGS) {
 				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
@@ -191,7 +227,7 @@ public class App implements Testable
 				preparedStatement.setString(4, "17127");
 				preparedStatement.executeQuery();
 
-				String sql2 = "insert into account (aid,cid,branch_name,balance,interest) values (?,?,?,?,?)";
+				String sql2 = "insert into savingaccount (aid,cid,branch_name,balance,interest) values (?,?,?,?,?)";
 				preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
@@ -200,16 +236,16 @@ public class App implements Testable
 				preparedStatement.setFloat(5, 0.15f);
 				preparedStatement.executeQuery();
 
-
-				result = "successful";
+				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
+				//result = "successful";
 
 			} else {
-				result = "343";
+				result = "1";
 			}
 		}
 		catch( SQLException e )
 		{
-			result = "93";
+			result = "1";
 			System.err.println( e.getMessage() );
 		}
 
@@ -226,16 +262,17 @@ public class App implements Testable
 
 			String s1 = "create table Customer(cid varchar(20),cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))";
 			String s2 = "create table Account(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
-			String s3 = "create table CheckingAccount(aid integer,primary key(aid),foreign key(aid) references Account(aid) on delete cascade)";
-			String s4 = "create table SavingAccount(aid integer,primary key(aid),foreign key(aid) references Account(aid) on delete cascade)";
-			String s5 = "create table Transaction(tid integer,cid varchar(20),aid integer,testId date,info varchar(20),type varchar(20),primary key(tid),foreign key(cid) references Customer(cid),foreign key(aid) references Account(aid))";
-
+			String s3 = "create table StudentCheckingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
+			String s4 = "create table InterestCheckingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
+			String s5 = "create table SavingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
+			String s6 = "create table Transaction(tid integer,cid varchar(20),aid integer,testId date,info varchar(20),type varchar(20),primary key(tid),foreign key(cid) references Customer(cid),foreign key(aid) references Account(aid))";
 
 			statement.addBatch(s1);
 			statement.addBatch(s2);
 			statement.addBatch(s3);
 			statement.addBatch(s4);
 			statement.addBatch(s5);
+			statement.addBatch(s6);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
@@ -273,18 +310,13 @@ public class App implements Testable
 //			statement.executeBatch();
 			ResultSet resultSet = statement.executeQuery("drop table Transaction");
 			resultSet = statement.executeQuery("drop table SavingAccount");
-			resultSet = statement.executeQuery("drop table CheckingAccount");
+			resultSet = statement.executeQuery("drop table StudentCheckingAccount");
+			resultSet = statement.executeQuery("drop table InterestCheckingAccount");
 			resultSet = statement.executeQuery("drop table Account");
 			resultSet = statement.executeQuery("drop table Customer");
 
 			return "successfully drops the table!";
 
-//			try( ResultSet resultSet = statement.executeQuery("drop table Account" ))
-//			{
-//				return "successfully drops the table!";
-////				while( resultSet.next() )
-////					System.out.println( resultSet.getString( 1 ) + " " + resultSet.getString( 2 ) + " " );
-//			}
 		}
 		catch( SQLException e )
 		{

@@ -39,7 +39,11 @@ public class Main
 			System.out.println( r );
 
 			// Another example test.
-			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "1", 1234.56, "10", "Im YoungMing", "Known" );
+//			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "7", 1234.56, "12", "adfasdf", "Known" );
+//			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "1221", 1234.56, "54", "adfasdf", "Known" );
+//			System.out.println( r );
+			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
 			System.out.println( r );
 		}
 	}
