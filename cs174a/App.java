@@ -162,7 +162,27 @@ public class App implements Testable
 	@Override
 	public String listClosedAccounts()
 	{
-		return "0 it works!";
+
+		StringBuilder sb = new StringBuilder();
+		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
+
+
+			try( ResultSet resultSet = statement.executeQuery( "select account.aid from account where account.status = 1" ) )
+			{
+				while( resultSet.next() ) {
+					sb.append(resultSet.getInt("aid"));
+					sb.append(" ");
+				}
+			}
+
+			return "0 " + sb.toString();
+
+		}
+		catch( SQLException e )
+		{
+			System.err.println( e.getMessage() );
+			return "1";
+		}
 	}
 
 	/**
@@ -366,6 +386,30 @@ public class App implements Testable
 			return "1";
 		}
 
+	}
+
+	@Override
+	public String showBalance( String accountId ) {
+		double balance = 0.0;
+		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
+
+			String sql = "select account.balance from account where account.aid = ?";
+
+			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
+			preparedStatement.setString(1, accountId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			while (resultSet.next()) {
+				balance = resultSet.getDouble("balance");
+			}
+			return "0 " + balance;
+
+		}
+		catch( SQLException e )
+		{
+			System.err.println( e.getMessage() );
+			return "1";
+		}
 	}
 
 }
