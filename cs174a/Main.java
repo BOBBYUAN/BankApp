@@ -28,8 +28,8 @@ public class Main
 		if( r.equals( "0" ) )
 		{
 			//app.exampleAccessToDB();                // Example on how to connect to the DB.
-//			r = app.createTables();
-//			System.out.println( r );
+			r = app.createTables();
+			System.out.println( r );
 
 //			r = app.dropTables();
 //			System.out.println( r );
@@ -46,8 +46,8 @@ public class Main
 //			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
 //			System.out.println( r );
 //
-			r = app.deposit("1", 100.00);
-			System.out.println(r);
+//			r = app.deposit("1", 100.00);
+//			System.out.println(r);
 //			r = app.showBalance("3");
 //			System.out.println(r);
 		}

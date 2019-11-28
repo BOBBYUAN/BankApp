@@ -285,18 +285,12 @@ public class App implements Testable
 
 			String s1 = "create table Customer(cid varchar(20),cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))";
 			String s2 =  "create table Account(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),type varchar(20), interest float, status integer, primary key(aid),foreign key(cid) references Customer(cid))";
-			//String s2 = "create table Account(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
-			//String s3 = "create table StudentCheckingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
-			//String s4 = "create table InterestCheckingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,sprimary key(aid),foreign key(cid) references Customer(cid))";
-			//String s5 = "create table SavingAccount(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))";
-			//String s6 = "create table Transaction(tid integer,cid varchar(20),aid integer,testId date,info varchar(20),type varchar(20),primary key(tid),foreign key(cid) references Customer(cid),foreign key(aid) references Account(aid))";
+			String s3 =  "create table Owns(cid varchar(20),aid integer, primary key(cid, aid), foreign key (cid) references Customer(cid), foreign key (aid) references Account(aid))";
+
 
 			statement.addBatch(s1);
 			statement.addBatch(s2);
-//			statement.addBatch(s3)
-//			statement.addBatch(s4);
-//			statement.addBatch(s5);
-//			statement.addBatch(s6);
+			statement.addBatch(s3);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
@@ -337,7 +331,8 @@ public class App implements Testable
 //			resultSet = statement.executeQuery("drop table SavingAccount");
 //			resultSet = statement.executeQuery("drop table StudentCheckingAccount");
 //			resultSet = statement.executeQuery("drop table InterestCheckingAccount");
-			ResultSet resultSet = statement.executeQuery("drop table Account");
+			ResultSet resultSet = statement.executeQuery("drop table Owns");
+			resultSet = statement.executeQuery("drop table Account");
 			resultSet = statement.executeQuery("drop table Customer");
 
 			return "0";
@@ -395,7 +390,8 @@ public class App implements Testable
 	}
 
 	@Override
-	public String showBalance( String accountId ) {
+	public String showBalance( String accountId )
+	{
 		double balance = 0.0;
 		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
 
@@ -417,5 +413,25 @@ public class App implements Testable
 			return "1";
 		}
 	}
+
+//	@Override
+//	public String createPocketAccount( String id, String linkedId, double initialTopUp, String tin );
+//	{
+//		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+//		{
+//			String sql = "select ";
+//
+//		}
+//
+//
+//
+//
+//
+//		catch( SQLException e )
+//		{
+//			System.err.println( e.getMessage() );
+//			return "1";
+//		}
+//	}
 
 }
