@@ -35,8 +35,8 @@ public class Main
 //			System.out.println( r );
 
 			// Example tests.  We'll overwrite your Main.main() function with our final tests.
-			r = app.listClosedAccounts();
-			System.out.println( r );
+//			r = app.listClosedAccounts();
+//			System.out.println( r );
 
 			// Another example test.
 //			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "7", 1234.56, "12", "adfasdf", "Known" );
@@ -46,10 +46,10 @@ public class Main
 //			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
 //			System.out.println( r );
 //
-//			r = app.deposit("1221",10.00);
-//			System.out.println(r);
-			r = app.showBalance("3");
+			r = app.deposit("1", 100.00);
 			System.out.println(r);
+//			r = app.showBalance("3");
+//			System.out.println(r);
 		}
 	}
 	//!### FINALIZAMOS

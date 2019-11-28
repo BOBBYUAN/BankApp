@@ -121,8 +121,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##wangcheng";
-		final String DB_PASSWORD = "7429699";
+		final String DB_USER = "c##grousseva";
+		final String DB_PASSWORD = "8611311";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();
@@ -351,33 +351,39 @@ public class App implements Testable
 	}
 
 	@Override
-	public String deposit( String accountId, double amount ) {
+	public String deposit( String accountId, double amount )
+	{
+		// change parameter to int to match db
+//		int aid = Integer.
 		double oldBalance = 0.0;
 		double newBalance = 0.0;
 		String result;
 		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
 
-//			String sql = "select savingaccount.balance from savingaccount where savingaccount.aid = ? UNION\n" +
-//					"select studentcheckingaccount.balance from studentcheckingaccount where studentcheckingaccount.aid = ? UNION\n" +
-//					"select interestcheckingaccount.balance from interestcheckingaccount where interestcheckingaccount.aid = ?";
-
 			String sql = "select account.balance from account where account.aid = ?";
 			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
 			preparedStatement.setString(1, accountId);
-			//preparedStatement.setString(2,accountId);
-			//preparedStatement.setString(3,accountId);
 
 			ResultSet resultSet = preparedStatement.executeQuery();
 
-			while (resultSet.next()) {
+			if (resultSet.next())
+			{
 				oldBalance = resultSet.getDouble("balance");
 				newBalance = oldBalance + amount;
 			}
+			else
+			{
+				return "this aid is invalid";
+			}
 
 
-			resultSet.updateDouble("balance", newBalance);
+			String updateBalance = "update account set balance = ? where account.aid = ?";
+			PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updateBalance);
+			preparedUpdateStatement.setDouble(1, newBalance);
+			preparedUpdateStatement.setString(2, accountId);
+
+			preparedUpdateStatement.executeUpdate();
 			return "0 " + oldBalance + " " + newBalance;
-
 
 		}
 		catch( SQLException e )
