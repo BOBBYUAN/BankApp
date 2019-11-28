@@ -286,11 +286,13 @@ public class App implements Testable
 			String s1 = "create table Customer(cid varchar(20),cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))";
 			String s2 =  "create table Account(aid integer,cid varchar(20),branch_name varchar(20),balance decimal(13,2),type varchar(20), interest float, status integer, primary key(aid),foreign key(cid) references Customer(cid))";
 			String s3 =  "create table Owns(cid varchar(20),aid integer, primary key(cid, aid), foreign key (cid) references Customer(cid), foreign key (aid) references Account(aid))";
+			String s4 = "create table Linked(primary_aid integer, pocket_aid integer, primary key (primary_aid, pocket_aid))";
 
 
 			statement.addBatch(s1);
 			statement.addBatch(s2);
 			statement.addBatch(s3);
+			statement.addBatch(s4);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
@@ -331,7 +333,8 @@ public class App implements Testable
 //			resultSet = statement.executeQuery("drop table SavingAccount");
 //			resultSet = statement.executeQuery("drop table StudentCheckingAccount");
 //			resultSet = statement.executeQuery("drop table InterestCheckingAccount");
-			ResultSet resultSet = statement.executeQuery("drop table Owns");
+			ResultSet resultSet = statement.executeQuery("drop table Linked");
+			resultSet = statement.executeQuery("drop table Owns");
 			resultSet = statement.executeQuery("drop table Account");
 			resultSet = statement.executeQuery("drop table Customer");
 
@@ -419,13 +422,16 @@ public class App implements Testable
 //	{
 //		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 //		{
-//			String sql = "select ";
+//			String sql = "select owns.aid from owns where owns.cid = ?";
+//			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
+//			preparedStatement.setString(1, tin);
+//			ResultSet resultSet = preparedStatement.executeQuery();
+//			while(rs.next())
+//			{
+//				accId = rs.getString(1);
+//			}
 //
 //		}
-//
-//
-//
-//
 //
 //		catch( SQLException e )
 //		{
