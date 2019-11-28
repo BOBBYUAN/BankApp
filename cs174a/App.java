@@ -8,6 +8,8 @@ import java.util.Properties;
 import java.util.Scanner;
 import oracle.jdbc.pool.OracleDataSource;
 import oracle.jdbc.OracleConnection;
+import java.util.Calendar;
+
 
 /**
  * The most important class for your application.
@@ -306,10 +308,20 @@ public class App implements Testable
 					"primary key(cid, aid), " +
 					"foreign key (cid) references Customer(cid), " +
 					"foreign key (aid) references Account(aid))";
+			String s4 = "create table Transaction(" +
+					"tid integer, " +
+					"amount decimal(13, 2), " +
+					"ttype varchar(20), " +
+					"trans_date date, " +
+					"fee decimal(13,2), " +
+					"check_number integer, " +
+					"balance decimal(13, 2), " +
+					"primary key(tid))";
 
 			statement.addBatch(s1);
 			statement.addBatch(s2);
 			statement.addBatch(s3);
+			statement.addBatch(s4);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
@@ -353,6 +365,7 @@ public class App implements Testable
 			ResultSet resultSet = statement.executeQuery("drop table Owns");
 			resultSet = statement.executeQuery("drop table Account");
 			resultSet = statement.executeQuery("drop table Customer");
+			resultSet = statement.executeQuery("drop table Transaction");
 			return "0";
 
 		}
@@ -366,8 +379,6 @@ public class App implements Testable
 	@Override
 	public String deposit( String accountId, double amount )
 	{
-		// change parameter to int to match db
-//		int aid = Integer.
 		double oldBalance = 0.0;
 		double newBalance = 0.0;
 		String result;
@@ -482,7 +493,25 @@ public class App implements Testable
 			System.err.println( e.getMessage() );
 			return "1";
 		}
+	}
 
+	@Override
+	public String setDate( int year, int month, int day)
+	{
+		// java months are 0 based, ex. if you want month date to be november, put 10 instead of 11
+		Calendar cal = Calendar.getInstance();
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			cal.set(year, month, day);
+			String d = Integer.toString(year) + "-" + Integer.toString(month)  + "-" + Integer.toString(day);
+			cal.getTime();
+			return "date is: " + d + "\n" + cal.getTime();
+		}
+		catch( SQLException e)
+		{
+			System.err.println( e.getMessage() );
+			return "1";
+		}
 	}
 
 }

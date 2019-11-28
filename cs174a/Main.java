@@ -28,8 +28,8 @@ public class Main
 		if( r.equals( "0" ) )
 		{
 			//app.exampleAccessToDB();                // Example on how to connect to the DB.
-			r = app.createTables();
-			System.out.println( r );
+//			r = app.createTables();
+//			System.out.println( r );
 
 //			r = app.dropTables();
 //			System.out.println( r );
@@ -51,8 +51,13 @@ public class Main
 //			r = app.showBalance("3");
 //			System.out.println(r);
 
-			r = app.createPocketAccount("3", "1", 0, "1");
+//			r = app.createPocketAccount("3", "1", 0, "1");
+//			System.out.println(r);
+
+			// sets date to be nov 10 2010
+			r = app.setDate(2010, 10, 10);
 			System.out.println(r);
+
 		}
 	}
 	//!### FINALIZAMOS
