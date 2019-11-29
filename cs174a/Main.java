@@ -64,6 +64,9 @@ public class Main
 			r = app.topUp("2", 10);
 			System.out.println(r);
 
+//			r = app.payFriend("2", "3", 5);
+//			System.out.println(r);
+
 		}
 	}
 	//!### FINALIZAMOS

@@ -133,7 +133,7 @@ interface Testable
 	 *         fromNewBalance is the new balance of the source pocket account, with up to 2 decimal places (e.g. with %.2f); and
 	 *         toNewBalance is the new balance of destination pocket account, with up to 2 decimal places.
 	 */
-	//String payFriend( String from, String to, double amount );
+	String payFriend( String from, String to, double amount );
 
 	/**
 	 * Generate list of closed accounts.
