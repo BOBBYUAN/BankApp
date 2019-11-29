@@ -76,8 +76,11 @@ public class Main
 //			r = app.addPrimary("1", "2");
 //			System.out.println(r);
 
-			r = app.addCoowner("1", "2");
-			System.out.println(r);
+//			r = app.addCoowner("1", "2");
+//			System.out.println(r);
+
+//			r = app.transfer("4", "1", -10);
+//			System.out.println(r);
 
 		}
 	}

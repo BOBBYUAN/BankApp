@@ -686,7 +686,7 @@ public class App implements Testable
 				int status = Integer.parseInt(resultSet2.getString(2));
 				if (status == 1)
 				{
-					System.out.println("Source account is closed");
+					System.out.println("Destination account is closed");
 					return "1";
 				}
 				toBalance = Double.parseDouble(resultSet2.getString(1));
@@ -981,4 +981,86 @@ public class App implements Testable
 		}
 	}
 
+	public String transfer(String from, String to, double amount)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			if (amount < 0)
+			{
+				System.out.println("Amount must be positive");
+				return "1";
+			}
+
+			String fromCheckingsOrSavings = "select balance, status from account where aid = ? and " +
+					"(account.type = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING' or account.type = 'SAVINGS')";
+
+			PreparedStatement fromCS = _connection.prepareStatement(fromCheckingsOrSavings);
+			fromCS.setString(1, from);
+			ResultSet resultSet1 = fromCS.executeQuery();
+			double fromBalance = 0;
+			double toBalance = 0;
+
+			if (resultSet1.next())
+			{
+				fromBalance = Double.parseDouble(resultSet1.getString(1));
+				int status = Integer.parseInt(resultSet1.getString(2));
+				if (status == 1)
+				{
+					System.out.println("Source account is closed");
+					return "1";
+				}
+				if (fromBalance - amount <= 0.01)
+				{
+					System.out.println("Not enough funds");
+					return "1";
+				}
+			}
+			else
+			{
+				System.out.println("Invalid checking/savings account id");
+				return "1";
+			}
+
+
+			fromCheckingsOrSavings = "select balance, status from account where aid = ? and " +
+					"(account.type = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING' or account.type = 'SAVINGS')";
+
+			PreparedStatement toP = _connection.prepareStatement(fromCheckingsOrSavings);
+			toP.setString(1, to);
+			ResultSet resultSet2 = toP.executeQuery();
+
+			if (resultSet2.next())
+			{
+				int status = Integer.parseInt(resultSet2.getString(2));
+				if (status == 1)
+				{
+					System.out.println("Destination account is closed");
+					return "1";
+				}
+				toBalance = Double.parseDouble(resultSet2.getString(1));
+				toBalance = toBalance + amount;
+				fromBalance = fromBalance - amount;
+
+				String updateFromPocket = "update account set balance = ? where aid = ?";
+				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updateFromPocket);
+				preparedUpdateStatement.setDouble(1, fromBalance);
+				preparedUpdateStatement.setString(2, from);
+
+				preparedUpdateStatement.executeUpdate();
+
+				preparedUpdateStatement = _connection.prepareStatement(updateFromPocket);
+				preparedUpdateStatement.setDouble(1, toBalance);
+				preparedUpdateStatement.setString(2, to);
+
+				preparedUpdateStatement.executeUpdate();
+			}
+
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+		return "0";
+	}
 }
