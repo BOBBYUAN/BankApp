@@ -760,7 +760,7 @@ public class App implements Testable
 
 				if (newBal <= 0.01)
 				{
-					System.out.println("Account closed");
+					System.out.println("Account closed"); /// come back to fix
 					return "1";
 				}
 
@@ -784,4 +784,70 @@ public class App implements Testable
 			return "1";
 		}
 	}
+
+	public String purchase(String accountId, double amount)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			if (amount <= 0)
+			{
+				System.out.println("Amount must be positive");
+				return "1";
+			}
+
+			String q = "select balance, status, type from account " +
+					"where aid = ?";
+			PreparedStatement p = _connection.prepareStatement(q);
+			p.setString(1, accountId);
+			ResultSet resultSet = p.executeQuery();
+			double bal;
+			double newBal;
+
+			if(resultSet.next())
+			{
+				int status = Integer.parseInt(resultSet.getString(2));
+				if (status == 1)
+				{
+					System.out.println("Account is closed");
+					return "1";
+				}
+				String t = resultSet.getString(3);
+
+				if (!t.equals("POCKET"))
+
+				{
+					System.out.println("Cannot withdraw because account must be pocket");
+					return "1";
+				}
+
+				bal = Double.parseDouble(resultSet.getString(1));
+				newBal = bal - amount;
+
+				if (newBal <= 0.01)
+				{
+					System.out.println("Account closed"); /// come back to fix
+					return "1";
+				}
+
+				String update = "update account set balance = ? where aid = ?";
+				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(update);
+				preparedUpdateStatement.setDouble(1, newBal);
+				preparedUpdateStatement.setString(2, accountId);
+				preparedUpdateStatement.executeUpdate();
+			}
+			else
+			{
+				System.out.println("Account id is not valid");
+				return "1";
+			}
+			return ("0 " + bal + " " + newBal);
+
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
 }

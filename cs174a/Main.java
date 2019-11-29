@@ -67,7 +67,10 @@ public class Main
 //			r = app.payFriend("2", "3", 5);
 //			System.out.println(r);
 
-			r = app.withdrawal("6", 10);
+//			r = app.withdrawal("1", 19.99);
+//			System.out.println(r);
+
+			r = app.purchase("3", 1);
 			System.out.println(r);
 
 		}
