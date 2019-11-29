@@ -325,7 +325,7 @@ public class App implements Testable
 					"primary key(cid, aid), " +
 					"foreign key(cid) references Customer(cid) on delete cascade," +
 					"foreign key(aid) references Account(aid) on delete cascade)";
-			String s5 = "create table CoOwners(" +
+			String s6 = "create table CoOwners(" +
 					"cid varchar(20), " +
 					"aid integer, " +
 					"primary key(cid, aid), " +
