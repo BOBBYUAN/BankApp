@@ -549,4 +549,75 @@ public class App implements Testable
 
 	}
 
+	@Override
+	public String topUp( String accountId, double amount )
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+
+			String sql = "select pocket_linked_to, balance from account where aid = ? and type = 'pocket'";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			p.setString(1, accountId);
+			ResultSet resultSet = p.executeQuery();
+
+			if (resultSet.next())
+			{
+				String parentId = resultSet.getString(1);
+				double pocketBal = Double.parseDouble(resultSet.getString(2));
+
+				System.out.println("PARENTID: " + parentId);
+
+				sql = "select balance from account where aid = ?";
+				p = _connection.prepareStatement(sql);
+				p.setString(1, parentId);
+				resultSet = p.executeQuery();
+
+				while (resultSet.next())
+				{
+					double parentBal = Double.parseDouble(resultSet.getString(1));
+					double parentNewBal = parentBal - amount;
+
+					if (parentNewBal <= 0.01)
+					{
+						System.out.println("Not enough funds");
+						return "1";
+					}
+					else
+					{
+						double pocketNewBal = pocketBal + amount;
+
+						String updatePocketBalance = "update account set balance = ? where aid = ?";
+						PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updatePocketBalance);
+						preparedUpdateStatement.setDouble(1, pocketNewBal);
+						preparedUpdateStatement.setString(2, accountId);
+
+						preparedUpdateStatement.executeUpdate();
+
+						String updateParentBalance = "update account set balance = ? where aid = ?";
+						preparedUpdateStatement = _connection.prepareStatement(updateParentBalance);
+						preparedUpdateStatement.setDouble(1, parentNewBal);
+						preparedUpdateStatement.setString(2, parentId);
+
+						preparedUpdateStatement.executeUpdate();
+
+					}
+
+				}
+
+			}
+			else
+			{
+				System.out.println("Invalid pocket account id");
+				return "1";
+			}
+			return "0";
+		}
+
+
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
 }

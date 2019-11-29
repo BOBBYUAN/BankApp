@@ -58,7 +58,10 @@ public class Main
 //			r = app.setDate(2010, 10, 10);
 //			System.out.println(r);
 
-			r = app.createCustomer("1", "2", "amy", "sb");
+//			r = app.createCustomer("1", "2", "amy", "sb");
+//////			System.out.println(r);
+
+			r = app.topUp("2", 10);
 			System.out.println(r);
 
 		}
