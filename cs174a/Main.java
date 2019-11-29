@@ -61,11 +61,14 @@ public class Main
 //			r = app.createCustomer("1", "2", "amy", "sb");
 //////			System.out.println(r);
 
-			r = app.topUp("2", 10);
-			System.out.println(r);
+//			r = app.topUp("2", 10);
+//			System.out.println(r);
 
 //			r = app.payFriend("2", "3", 5);
 //			System.out.println(r);
+
+			r = app.withdrawal("6", 10);
+			System.out.println(r);
 
 		}
 	}

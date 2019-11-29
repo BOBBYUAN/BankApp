@@ -310,9 +310,11 @@ public class App implements Testable
 					"foreign key (aid) references Account(aid))";
 			String s4 = "create table Transaction(" +
 					"tid integer, " +
+					"tate date, " +
+					"ttype varchar(20)," +
+					"tid integer, " +
 					"amount decimal(13, 2), " +
 					"ttype varchar(20), " +
-					"trans_date date, " +
 					"fee decimal(13,2), " +
 					"check_number integer, " +
 					"balance decimal(13, 2), " +
@@ -560,7 +562,7 @@ public class App implements Testable
 				return "1";
 			}
 
-			String sql = "select pocket_linked_to, balance, status from account where aid = ? and type = 'pocket'";
+			String sql = "select pocket_linked_to, balance, status from account where aid = ? and type = 'POCKET'";
 			PreparedStatement p = _connection.prepareStatement(sql);
 			p.setString(1, accountId);
 			ResultSet resultSet = p.executeQuery();
@@ -644,7 +646,7 @@ public class App implements Testable
 				return "1";
 			}
 
-			String fromPocket = "select balance, status from account where aid = ? and type = 'pocket'";
+			String fromPocket = "select balance, status from account where aid = ? and type = 'POCKET'";
 			PreparedStatement fromP = _connection.prepareStatement(fromPocket);
 			fromP.setString(1, from);
 			ResultSet resultSet1 = fromP.executeQuery();
@@ -673,7 +675,7 @@ public class App implements Testable
 			}
 
 
-			String toPocket = "select balance, status from account where aid = ? and type = 'pocket'";
+			String toPocket = "select balance, status from account where aid = ? and type = 'POCKET'";
 			PreparedStatement toP = _connection.prepareStatement(toPocket);
 			toP.setString(1, to);
 			ResultSet resultSet2 = toP.executeQuery();
@@ -710,6 +712,71 @@ public class App implements Testable
 			}
 
 			return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+	public String withdrawal(String accountId, double amount)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			if (amount <= 0)
+			{
+				System.out.println("Amount must be positive");
+				return "1";
+			}
+
+			String q = "select balance, status, type from account " +
+					"where aid = ?";
+			PreparedStatement p = _connection.prepareStatement(q);
+			p.setString(1, accountId);
+			ResultSet resultSet = p.executeQuery();
+			double bal;
+			double newBal;
+
+			if(resultSet.next())
+			{
+				int status = Integer.parseInt(resultSet.getString(2));
+				if (status == 1)
+				{
+					System.out.println("Account is closed");
+					return "1";
+				}
+				String t = resultSet.getString(3);
+
+				if (!t.equals("INTEREST_CHECKING") && !t.equals("STUDENT_CHECKING") && !t.equals("SAVINGS"))
+
+				{
+					System.out.println("Cannot withdraw because account must be checking or savings");
+					return "1";
+				}
+
+				bal = Double.parseDouble(resultSet.getString(1));
+				newBal = bal - amount;
+
+				if (newBal <= 0.01)
+				{
+					System.out.println("Account closed");
+					return "1";
+				}
+
+				String update = "update account set balance = ? where aid = ?";
+				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(update);
+				preparedUpdateStatement.setDouble(1, newBal);
+				preparedUpdateStatement.setString(2, accountId);
+				preparedUpdateStatement.executeUpdate();
+			}
+			else
+			{
+				System.out.println("Account id is not valid");
+				return "1";
+			}
+			return ("0 " + bal + " " + newBal);
+
 		}
 		catch(SQLException e)
 		{
