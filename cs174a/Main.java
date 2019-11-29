@@ -82,6 +82,9 @@ public class Main
 //			r = app.transfer("4", "1", -10);
 //			System.out.println(r);
 
+//			r = app.collect("3", "1", 1);
+//			System.out.println(r);
+
 		}
 	}
 	//!### FINALIZAMOS

@@ -1063,4 +1063,77 @@ public class App implements Testable
 		}
 		return "0";
 	}
+
+	public String collect(String pocketId, String parentAccountId, double amount)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String sql = "select balance, status from account where aid = ? and pocket_linked_to = ? and type = 'POCKET'";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			p.setString(1, pocketId);
+			p.setString(2, parentAccountId);
+			ResultSet resultSet = p.executeQuery();
+			double parentBal;
+			double pocketBal;
+
+			if (resultSet.next())
+			{
+				int status = Integer.parseInt(resultSet.getString(2));
+				if (status == 1)
+				{
+					System.out.println("Pocket account is closed");
+					return "1";
+				}
+
+				pocketBal = resultSet.getDouble(1);
+				pocketBal = pocketBal - amount;
+
+				if (pocketBal <= 0.01) {
+					System.out.println("Not enough funds");
+					return "1";
+				}
+			}
+			else
+			{
+				System.out.println("Invalid pocket or checking/savings account id");
+				return "1";
+			}
+
+			sql = "select balance from account where aid = ?";
+			p = _connection.prepareStatement(sql);
+			p.setString(1, parentAccountId);
+			resultSet = p.executeQuery();
+
+			if (resultSet.next())
+			{
+				parentBal = resultSet.getDouble(1);
+				parentBal = parentBal + amount;
+
+				String updatePocketBalance = "update account set balance = ? where aid = ?";
+				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updatePocketBalance);
+				preparedUpdateStatement.setDouble(1, pocketBal);
+				preparedUpdateStatement.setString(2, pocketId);
+
+				preparedUpdateStatement.executeUpdate();
+
+				String updateParentBalance = "update account set balance = ? where aid = ?";
+				preparedUpdateStatement = _connection.prepareStatement(updateParentBalance);
+				preparedUpdateStatement.setDouble(1, parentBal);
+				preparedUpdateStatement.setString(2, parentAccountId);
+
+				preparedUpdateStatement.executeUpdate();
+			}
+			else
+			{
+				System.out.println("Invalid pocket account id");
+				return "1";
+			}
+			return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
 }
