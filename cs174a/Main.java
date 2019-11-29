@@ -55,7 +55,10 @@ public class Main
 //			System.out.println(r);
 
 			// sets date to be nov 10 2010
-			r = app.setDate(2010, 10, 10);
+//			r = app.setDate(2010, 10, 10);
+//			System.out.println(r);
+
+			r = app.createCustomer("1", "2", "amy", "sb");
 			System.out.println(r);
 
 		}

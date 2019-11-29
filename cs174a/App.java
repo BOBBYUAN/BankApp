@@ -514,4 +514,39 @@ public class App implements Testable
 		}
 	}
 
+	@Override
+	public String createCustomer( String accountId, String tin, String name, String address )
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String sql = "select aid from account where aid = ? and status = 0";
+			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
+			preparedStatement.setString(1, accountId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			if (resultSet.next())
+			{
+				String createCustomer = "insert into Customer(cid, cname, address, pin) values(?, ?, ?, 1717)";
+				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(createCustomer);
+				preparedUpdateStatement.setString(1, tin);
+				preparedUpdateStatement.setString(2, name);
+				preparedUpdateStatement.setString(3, address);
+//				preparedUpdateStatement.setString(4, "1717"); ///come back to encrypt
+				preparedUpdateStatement.executeUpdate();
+			}
+			else
+			{
+				System.out.println("Unable to create customer because account specified is closed");
+				return "1";
+			}
+			return "0" + accountId + "" + name;
+		}
+		catch( SQLException e)
+		{
+			System.err.println( e.getMessage() );
+			return "1";
+		}
+
+	}
+
 }
