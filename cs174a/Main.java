@@ -70,7 +70,13 @@ public class Main
 //			r = app.withdrawal("1", 19.99);
 //			System.out.println(r);
 
-			r = app.purchase("3", 1);
+//			r = app.purchase("3", 1);
+//			System.out.println(r);
+
+//			r = app.addPrimary("1", "2");
+//			System.out.println(r);
+
+			r = app.addCoowner("1", "2");
 			System.out.println(r);
 
 		}

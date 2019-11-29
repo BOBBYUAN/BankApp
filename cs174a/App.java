@@ -302,13 +302,7 @@ public class App implements Testable
 					"pocket_linked_to integer," +
 					"primary key(aid)," +
 					"foreign key(cid) references Customer(cid))";
-			String s3 =  "create table Owns(" +
-					"cid varchar(20)," +
-					"aid integer, " +
-					"primary key(cid, aid), " +
-					"foreign key (cid) references Customer(cid), " +
-					"foreign key (aid) references Account(aid))";
-			String s4 = "create table Transaction(" +
+			String s3 = "create table Transaction(" +
 					"tid integer, " +
 					"tate date, " +
 					"ttype varchar(20)," +
@@ -319,16 +313,11 @@ public class App implements Testable
 					"check_number integer, " +
 					"balance decimal(13, 2), " +
 					"primary key(tid))";
-			String s5 = "create table Primaries(" +
-					"cid varchar(20), " +
+			String s4 = "create table Owners(" +
+					"	cid varchar(20), " +
 					"aid integer, " +
-					"primary key(cid, aid), " +
-					"foreign key(cid) references Customer(cid) on delete cascade," +
-					"foreign key(aid) references Account(aid) on delete cascade)";
-			String s6 = "create table CoOwners(" +
-					"cid varchar(20), " +
-					"aid integer, " +
-					"primary key(cid, aid), " +
+					"primary integer default 0," +
+					"primary key(cid, aid, primary), " +
 					"foreign key(cid) references Customer(cid) on delete cascade," +
 					"foreign key(aid) references Account(aid) on delete cascade)";
 
@@ -336,8 +325,6 @@ public class App implements Testable
 			statement.addBatch(s2);
 			statement.addBatch(s3);
 			statement.addBatch(s4);
-			statement.addBatch(s5);
-			statement.addBatch(s6);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
@@ -378,7 +365,7 @@ public class App implements Testable
 //			resultSet = statement.executeQuery("drop table SavingAccount");
 //			resultSet = statement.executeQuery("drop table StudentCheckingAccount");
 //			resultSet = statement.executeQuery("drop table InterestCheckingAccount");
-			ResultSet resultSet = statement.executeQuery("drop table Owns");
+			ResultSet resultSet = statement.executeQuery("drop table Owners");
 			resultSet = statement.executeQuery("drop table Account");
 			resultSet = statement.executeQuery("drop table Customer");
 			resultSet = statement.executeQuery("drop table Transaction");
@@ -856,6 +843,136 @@ public class App implements Testable
 			}
 			return ("0 " + bal + " " + newBal);
 
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+
+	// change type void, return type String was just used to test (or keep it, decide later)
+	public String addPrimary(String customerId, String accountId) // owner_type: 0 for primary
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+
+			String sql = "select aid, primary from owners where aid = ?";
+			PreparedStatement p =  _connection.prepareStatement(sql);
+			p.setString(1, accountId);
+			ResultSet resultSet1 = p.executeQuery();
+
+			int prim;
+			if(resultSet1.next())
+			{
+				prim = Integer.parseInt(resultSet1.getString(2));
+				if(prim == 0)
+				{
+					System.out.println("Account already has a primary owner");
+					return "1";
+				}
+			}
+
+			sql = "select cid from customer where cid = ?";
+			p = _connection.prepareStatement(sql);
+			p.setString(1, customerId);
+			resultSet1 = p.executeQuery();
+
+			String c;
+			int a;
+
+			if(!resultSet1.next())
+			{
+				System.out.println("Invalid tax id number");
+				return "1";
+			}
+			c = resultSet1.getString(1);
+
+			sql = "select aid from account where aid = ?";
+			p = _connection.prepareStatement(sql);
+			p.setString(1, accountId);
+			resultSet1 = p.executeQuery();
+
+			if(!resultSet1.next())
+			{
+				System.out.println("Invalid account id");
+				return "1";
+			}
+			a = Integer.parseInt(resultSet1.getString(1));
+
+			String createPrimary = "insert into Owners(cid, aid, primary) values(?, ?, ?)";
+			PreparedStatement insert = _connection.prepareStatement(createPrimary);
+			insert.setString(1, c);
+			insert.setInt(2, a);
+			insert.setInt(3, 0); //0 is for primary owner
+			insert.executeQuery();
+
+			return "0" + " " + c + " " + a;
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+	// change type void, return type String was just used to test (or keep it, decide later)
+	public String addCoowner(String customerId, String accountId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+
+			String sql = "select * from owners where aid = ? and cid = ?";
+			PreparedStatement p =  _connection.prepareStatement(sql);
+			p.setString(1, accountId);
+			p.setString(2, customerId);
+			ResultSet resultSet1 = p.executeQuery();
+
+			if(resultSet1.next())
+			{
+				System.out.println("User is already an owner");
+				return "1";
+			}
+
+			int prim;
+
+			sql = "select cid from customer where cid = ?";
+			p = _connection.prepareStatement(sql);
+			p.setString(1, customerId);
+			resultSet1 = p.executeQuery();
+
+			String c;
+			int a;
+
+
+			if(!resultSet1.next())
+			{
+				System.out.println("Invalid tax id number");
+				return "1";
+			}
+			c = resultSet1.getString(1);
+
+			sql = "select aid from account where aid = ?";
+			p = _connection.prepareStatement(sql);
+			p.setString(1, accountId);
+			resultSet1 = p.executeQuery();
+
+			if(!resultSet1.next())
+			{
+				System.out.println("Invalid account id");
+				return "1";
+			}
+			a = Integer.parseInt(resultSet1.getString(1));
+
+			String createPrimary = "insert into Owners(cid, aid, primary) values(?, ?, ?)";
+			PreparedStatement insert = _connection.prepareStatement(createPrimary);
+			insert.setString(1, c);
+			insert.setInt(2, a);
+			insert.setInt(3, 1); // 1 is for co-owner
+			insert.executeQuery();
+
+			return "0" + " " + c + " " + a;
 		}
 		catch(SQLException e)
 		{
