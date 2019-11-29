@@ -319,11 +319,25 @@ public class App implements Testable
 					"check_number integer, " +
 					"balance decimal(13, 2), " +
 					"primary key(tid))";
+			String s5 = "create table Primaries(" +
+					"cid varchar(20), " +
+					"aid integer, " +
+					"primary key(cid, aid), " +
+					"foreign key(cid) references Customer(cid) on delete cascade," +
+					"foreign key(aid) references Account(aid) on delete cascade)";
+			String s5 = "create table CoOwners(" +
+					"cid varchar(20), " +
+					"aid integer, " +
+					"primary key(cid, aid), " +
+					"foreign key(cid) references Customer(cid) on delete cascade," +
+					"foreign key(aid) references Account(aid) on delete cascade)";
 
 			statement.addBatch(s1);
 			statement.addBatch(s2);
 			statement.addBatch(s3);
 			statement.addBatch(s4);
+			statement.addBatch(s5);
+			statement.addBatch(s6);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
