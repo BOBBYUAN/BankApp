@@ -637,7 +637,7 @@ public class App implements Testable
 	}
 
 	@Override
-	public String payFriend( String from, String to, double amount )
+	public String payFriend(String from, String to, double amount ) // come back to fix cid check ownership
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
@@ -646,6 +646,12 @@ public class App implements Testable
 				System.out.println("Amount must be positive");
 				return "1";
 			}
+
+//			if(checkOwnership(this.cid, from) == false)
+//			{
+//				System.out.println("Customer must be an owner of source account");
+//				return "1";
+//			}
 
 			String fromPocket = "select balance, status from account where aid = ? and type = 'POCKET'";
 			PreparedStatement fromP = _connection.prepareStatement(fromPocket);
@@ -1173,6 +1179,185 @@ public class App implements Testable
 				return "1";
 			}
 			return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+	public boolean checkOwnership(String customerId, String accountId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String sql = "select cid from owners where cid = ? and aid = ?";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			p.setString(1, customerId);
+			p.setString(2, accountId);
+			ResultSet resultSet = p.executeQuery();
+
+			String owner;
+
+			if (resultSet.next())
+			{
+				owner = resultSet.getString(1);
+				if (owner.equals(customerId))
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			return false;
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return false;
+		}
+	}
+
+
+	public boolean checkValidAccount(String accountId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String sql = "select aid from account where aid = ?";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			p.setString(1, accountId);
+			ResultSet resultSet = p.executeQuery();
+
+			if (resultSet.next())
+			{
+					return true;
+			}
+			return false;
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean checkSavingsOrCheckings(String accountId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String sql = "select aid from account where ttype = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING' or account.type = 'SAVINGS')";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			p.setString(1, accountId);
+			ResultSet resultSet = p.executeQuery();
+
+			String a;
+
+			if(resultSet.next())
+			{
+				a = resultSet.getString(1);
+				if(a.equals(accountId))
+				{
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return false;
+		}
+
+	}
+
+	public String wire(String customerId, String from, String to, double amount)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			double fee = 0.02 * amount;
+			double fromBal;
+			double toBal;
+
+			if (checkValidAccount(from) == false)
+			{
+				System.out.println("Source account is not valid");
+				return "1";
+			}
+
+			if (checkValidAccount(to) == false)
+			{
+				System.out.println("Destination account is not valid");
+				return "1";
+			}
+
+			if (checkSavingsOrCheckings(from) == false)
+			{
+				System.out.println("Source account is not checking or savings account");
+				return "1";
+			}
+
+			if (checkSavingsOrCheckings(to) == false)
+			{
+				System.out.println("Destination account is not checking or savings account");
+				return "1";
+			}
+
+			if(checkOwnership(customerId, from))
+			{
+				String sql = "select balance from account where aid = ?";
+				PreparedStatement p = _connection.prepareStatement(sql);
+				p.setString(1, from);
+				ResultSet resultSet = p.executeQuery();
+
+				if(resultSet.next())
+				{
+					fromBal = Double.parseDouble(resultSet.getString(1));
+					fromBal = fromBal - amount - fee;
+					if (fromBal <= 0.01)
+					{
+						System.out.println("Not enough funds");
+						return "1";
+					}
+
+					sql = "select balance from account where aid = ?";
+					p = _connection.prepareStatement(sql);
+					p.setString(1, to);
+					resultSet = p.executeQuery();
+
+					if(resultSet.next())
+					{
+						toBal = Double.parseDouble(resultSet.getString(1));
+						toBal = toBal + amount;
+
+						String updateFromBal = "update account set balance = ? where aid = ?";
+						PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updateFromBal);
+						preparedUpdateStatement.setDouble(1, fromBal);
+						preparedUpdateStatement.setString(2, from);
+
+						preparedUpdateStatement.executeUpdate();
+
+						String updateToBal = "update account set balance = ? where aid = ?";
+						preparedUpdateStatement = _connection.prepareStatement(updateToBal);
+						preparedUpdateStatement.setDouble(1, toBal);
+						preparedUpdateStatement.setString(2, to);
+					}
+
+				}
+				else
+				{
+					System.out.println("Invalid customer id or source account id or destination account id");
+				}
+			}
+			else
+			{
+				System.out.println("Customer is not owner of source account");
+				return "1";
+			}
+			return "0";
+
 		}
 		catch(SQLException e)
 		{
