@@ -1273,6 +1273,36 @@ public class App implements Testable
 
 	}
 
+	public boolean checkChecking(String accountId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String sql = "select aid from account where aid = ? and type = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING'";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			p.setString(1, accountId);
+			ResultSet resultSet = p.executeQuery();
+
+			String a;
+
+			if(resultSet.next())
+			{
+				a = resultSet.getString(1);
+				if(a.equals(accountId))
+				{
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return false;
+		}
+
+	}
+
 	public String wire(String customerId, String from, String to, double amount)
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
@@ -1358,6 +1388,97 @@ public class App implements Testable
 			}
 			return "0";
 
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+	// get maximum check number from transaction table and incrememnt by 1 to create new check number
+	// if no checks have been made then first check number is 1
+	public int generateCheckNo()
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			int checkNumber;
+			String sql = "select max(check_number) from transaction";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			ResultSet resultSet = p.executeQuery();
+			if(resultSet.next())
+			{
+				checkNumber = Integer.parseInt(resultSet.getString(1)) + 1;
+			}
+			else
+			{
+				checkNumber = 1;
+			}
+			return checkNumber;
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return 1;
+		}
+	}
+
+	public String writeCheck(String accountId, double amount)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			if (amount < 0)
+			{
+				System.out.println("Amount must be positive");
+				return "1";
+			}
+			double checkingBal;
+			int checkNumber;
+
+			if(checkValidAccount(accountId))
+			{
+				if (checkChecking(accountId))
+				{
+					String sql = "select balance from account where aid = ?";
+					PreparedStatement p = _connection.prepareStatement(sql);
+					p.setString(1, accountId);
+					ResultSet resultSet = p.executeQuery();
+
+					while(resultSet.next())
+					{
+						checkingBal = resultSet.getDouble(1);
+						if (checkingBal - amount <= 0.01)
+						{
+							System.out.println("Not enough funds");
+							return "1";
+						}
+						checkingBal = checkingBal - amount;
+
+						String updateCheckingBal = "update account set balance = ? where aid = ?";
+						PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updateCheckingBal);
+						preparedUpdateStatement.setDouble(1, checkingBal);
+						preparedUpdateStatement.setString(2, accountId);
+
+						preparedUpdateStatement.executeUpdate();
+
+						checkNumber = generateCheckNo();
+						// generated check number to store in transaction
+						System.out.println(checkNumber);
+					}
+
+				}
+				else
+				{
+					System.out.println("You can only write a check from a checking account");
+					return "1";
+				}
+			}
+			else
+			{
+				System.out.println("Not a valid account id");
+				return "1";
+			}
+			return "0";
 		}
 		catch(SQLException e)
 		{

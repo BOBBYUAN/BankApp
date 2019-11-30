@@ -85,7 +85,10 @@ public class Main
 //			r = app.collect("6", "5", 10);
 //			System.out.println(r);
 
-			r = app.wire("1", "2", "1", 10);
+//			r = app.wire("1", "2", "1", 10);
+//			System.out.println(r);
+
+			r = app.writeCheck("4", 1);
 			System.out.println(r);
 
 		}
