@@ -21,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 public class App implements Testable
 {
 	private OracleConnection _connection;                   // Example connection object to your DB.
+	static String salt = "glennie-rousseva"; 				// for password encryption
+
 
 	/**
 	 * Default constructor.
@@ -303,9 +305,12 @@ public class App implements Testable
 					"foreign key(cid) references Customer(cid))";
 			String s3 = "create table Transaction(" +
 					"tid integer, " +
-					"tate date, " +
+					"tdate date, " +
+					"cname varchar(20)," +
 					"ttype varchar(20)," +
 					"amount decimal(13, 2), " +
+					"from_aid integer," +
+					"to_aid integer," +
 					"check_number integer, " +
 					"primary key(tid))";
 			String s4 = "create table Owners(" +
@@ -315,11 +320,13 @@ public class App implements Testable
 					"primary key(cid, aid, primary), " +
 					"foreign key(cid) references Customer(cid) on delete cascade," +
 					"foreign key(aid) references Account(aid) on delete cascade)";
+			String s5 = "create sequence tid start with 1 increment by 1";
 
-			statement.addBatch(s1);
-			statement.addBatch(s2);
-			statement.addBatch(s3);
-			statement.addBatch(s4);
+//			statement.addBatch(s1);
+//			statement.addBatch(s2);
+//			statement.addBatch(s3);
+//			statement.addBatch(s4);
+			statement.addBatch(s5);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
@@ -405,6 +412,8 @@ public class App implements Testable
 			preparedUpdateStatement.setString(2, accountId);
 
 			preparedUpdateStatement.executeUpdate();
+			addTransaction("glen", "deposit", amount, accountId, null, null);
+
 			return "0 " + oldBalance + " " + newBalance;
 
 		}
@@ -482,7 +491,7 @@ public class App implements Testable
 			preparedStatement.setFloat(6, 0.00f);
 			preparedStatement.setInt(7, 0);
 			preparedStatement.setInt(8, Integer.parseInt(linkedId));
-			preparedStatement.executeQuery();
+			preparedStatement.executeUpdate();
 			System.out.println("SUCESS");
 			return "0";
 		}
@@ -539,7 +548,7 @@ public class App implements Testable
 				System.out.println("Unable to create customer because account specified is closed");
 				return "1";
 			}
-			return "0" + accountId + "" + name;
+			return "0 " + accountId + " " + name;
 		}
 		catch( SQLException e)
 		{
@@ -577,8 +586,6 @@ public class App implements Testable
 				String parentId = resultSet.getString(1);
 				double pocketBal = Double.parseDouble(resultSet.getString(2));
 
-				System.out.println("PARENTID: " + parentId);
-
 				sql = "select balance from account where aid = ?";
 				p = _connection.prepareStatement(sql);
 				p.setString(1, parentId);
@@ -611,6 +618,8 @@ public class App implements Testable
 						preparedUpdateStatement.setString(2, parentId);
 
 						preparedUpdateStatement.executeUpdate();
+
+						addTransaction("glen", "tops up", amount, parentId, accountId, null);
 
 					}
 
@@ -708,6 +717,9 @@ public class App implements Testable
 				preparedUpdateStatement.setString(2, to);
 
 				preparedUpdateStatement.executeUpdate();
+
+				addTransaction("glen", "pays friend", amount, from, to, null);
+
 			}
 			else
 			{
@@ -761,6 +773,7 @@ public class App implements Testable
 
 				bal = Double.parseDouble(resultSet.getString(1));
 				newBal = bal - amount;
+				System.out.println(newBal);
 
 				if (newBal <= 0.01)
 				{
@@ -773,6 +786,8 @@ public class App implements Testable
 				preparedUpdateStatement.setDouble(1, newBal);
 				preparedUpdateStatement.setString(2, accountId);
 				preparedUpdateStatement.executeUpdate();
+
+				addTransaction("glen", "withdrawal", amount, accountId, null, null);
 			}
 			else
 			{
@@ -838,6 +853,9 @@ public class App implements Testable
 				preparedUpdateStatement.setDouble(1, newBal);
 				preparedUpdateStatement.setString(2, accountId);
 				preparedUpdateStatement.executeUpdate();
+
+				addTransaction("glen", "purchases", amount, accountId, null, null);
+
 			}
 			else
 			{
@@ -909,7 +927,7 @@ public class App implements Testable
 			insert.setString(1, c);
 			insert.setInt(2, a);
 			insert.setInt(3, 0); //0 is for primary owner
-			insert.executeQuery();
+			insert.executeUpdate();
 
 			return "0" + " " + c + " " + a;
 		}
@@ -973,7 +991,7 @@ public class App implements Testable
 			insert.setString(1, c);
 			insert.setInt(2, a);
 			insert.setInt(3, 1); // 1 is for co-owner
-			insert.executeQuery();
+			insert.executeUpdate();
 
 			return "0" + " " + c + " " + a;
 		}
@@ -1098,6 +1116,9 @@ public class App implements Testable
 				preparedUpdateStatement.setString(2, to);
 
 				preparedUpdateStatement.executeUpdate();
+
+				addTransaction("glen", "trasnfers", amount, from, to, null);
+
 			}
 
 		}
@@ -1169,6 +1190,9 @@ public class App implements Testable
 				preparedUpdateStatement.setString(2, parentAccountId);
 
 				preparedUpdateStatement.executeUpdate();
+
+				addTransaction("glen", "collects", amount, pocketId, parentAccountId, null);
+
 			}
 			else
 			{
@@ -1244,7 +1268,7 @@ public class App implements Testable
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			String sql = "select aid from account where ttype = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING' or account.type = 'SAVINGS')";
+			String sql = "select aid from account where aid = ? and (type = 'INTEREST_CHECKING' or type = 'STUDENT_CHECKING' or type = 'SAVINGS')";
 			PreparedStatement p = _connection.prepareStatement(sql);
 			p.setString(1, accountId);
 			ResultSet resultSet = p.executeQuery();
@@ -1274,7 +1298,7 @@ public class App implements Testable
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			String sql = "select aid from account where aid = ? and type = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING'";
+			String sql = "select aid from account where aid = ? and (type = 'INTEREST_CHECKING' or type = 'STUDENT_CHECKING')";
 			PreparedStatement p = _connection.prepareStatement(sql);
 			p.setString(1, accountId);
 			ResultSet resultSet = p.executeQuery();
@@ -1370,6 +1394,10 @@ public class App implements Testable
 						preparedUpdateStatement = _connection.prepareStatement(updateToBal);
 						preparedUpdateStatement.setDouble(1, toBal);
 						preparedUpdateStatement.setString(2, to);
+
+						preparedUpdateStatement.executeUpdate();
+
+						addTransaction("glen", "wires", amount, from, to, null);
 					}
 
 				}
@@ -1403,9 +1431,19 @@ public class App implements Testable
 			String sql = "select max(check_number) from transaction";
 			PreparedStatement p = _connection.prepareStatement(sql);
 			ResultSet resultSet = p.executeQuery();
+
 			if(resultSet.next())
 			{
-				checkNumber = Integer.parseInt(resultSet.getString(1)) + 1;
+				String maxCheckNum = resultSet.getString(1);
+				System.out.println("<" + maxCheckNum + ">");
+				if(maxCheckNum == null)
+				{
+					checkNumber = 1;
+				}
+				else
+				{
+					checkNumber = Integer.parseInt(maxCheckNum) + 1;
+				}
 			}
 			else
 			{
@@ -1459,8 +1497,10 @@ public class App implements Testable
 						preparedUpdateStatement.executeUpdate();
 
 						checkNumber = generateCheckNo();
-						// generated check number to store in transactions table
-						System.out.println(checkNumber);
+						String checkN = Integer.toString(checkNumber);
+
+						addTransaction("glen", "writes a check", amount, accountId, null, checkN);
+
 					}
 
 				}
@@ -1487,29 +1527,159 @@ public class App implements Testable
 
 	public String encryptPin(String pin)
 	{
-
 		try
 		{
-			SecureRandom random = new SecureRandom();
-			byte[] salt = new byte[16];
-			random.nextBytes(salt);
-
-			String s = new String(salt);
-			System.out.println(s);
+//			SecureRandom random = new SecureRandom();
+//			byte[] salt = new byte[16];
+//			random.nextBytes(salt);
+//			String s = new String(salt);
+//			s = "glennie";
 
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(salt);
+			md.update(salt.getBytes());
 			String passwordToHash = pin;
 			byte[] hashedPassword = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
 			String hp = new String(hashedPassword);
-			System.out.println(hp);
-			System.out.println(hp.length());
 			return hp;
 		}
 		catch (Exception e)
 		{
 			return "1";
-
 		}
 	}
+
+	public boolean verifyPin(String cid, String pin)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String s = "select pin from customer where cid = ?";
+			PreparedStatement p = _connection.prepareStatement(s);
+			p.setString(1, cid);
+			ResultSet rs = p.executeQuery();
+
+			String dbPin = "";
+			String checkEncryption = "";
+
+			if(rs.next())
+			{
+				dbPin = rs.getString(1);
+				checkEncryption = encryptPin(pin);
+				System.out.println(dbPin.equals(checkEncryption));
+				System.out.println(dbPin);
+				System.out.println(checkEncryption);
+				return(dbPin.equals(checkEncryption));
+			}
+			else
+			{
+				System.out.println("No such customer");
+				return false;
+			}
+
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return false;
+		}
+
+	}
+
+	public void setPin(String cid, String OldPIN, String NewPIN)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String encryptedOld = encryptPin(OldPIN);
+			String encryptedNew = encryptPin(NewPIN);
+
+			String s = "select cid from customer where cid = ? and pin = ?";
+			PreparedStatement p = _connection.prepareStatement(s);
+			p.setString(1, cid);
+			p.setString(2, encryptedOld);
+			ResultSet rs = p.executeQuery();
+
+			if (rs.next())
+			{
+				String updatePin = "update customer set pin = ? where cid = ? and pin = ?";
+				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updatePin);
+				preparedUpdateStatement.setString(1, encryptedNew);
+				preparedUpdateStatement.setString(2, cid);
+				preparedUpdateStatement.setString(3, encryptedOld);
+				preparedUpdateStatement.executeUpdate();
+
+				System.out.println("Successfully updated pin");
+				System.out.println(encryptedOld);
+				System.out.println(encryptedNew);
+
+			}
+			else
+			{
+				System.out.println("Incorrect cid and/or oldPin");
+				return;
+			}
+
+
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			System.out.println("1");
+
+		}
+
+	}
+
+	public String addTransaction(String customerName, String trans_type, double amount, String from, String to, String checkNumber)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+
+			String sql = "insert into transaction(tid, cname, tdate, ttype, amount, from_aid, to_aid, check_number) " +
+					"values(tid.nextval, ?, ?, ?, ?, ?, ?, ?)";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			p.setString(1, customerName);
+			p.setString(2, "21-NOV-19");
+			p.setString(3, trans_type);
+			p.setDouble(4, amount);
+			p.setString(5, from);
+			p.setString(6, to);
+			p.setString(7, checkNumber);
+			p.executeUpdate();
+			return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+	public String deleteTransactions()
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			// check if its end of the month?
+			String sql = "truncate table transaction";
+			PreparedStatement p = _connection.prepareStatement(sql);
+			p.executeUpdate();
+			return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+//	public String deleteClosedAccountsAndCustomers()
+//	{
+//		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+//		{
+//
+//		}
+//		catch(SQLException e)
+//		{
+//			System.err.println(e.getMessage());
+//			return "1";
+//		}
+//	}
 }

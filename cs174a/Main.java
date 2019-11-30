@@ -28,8 +28,8 @@ public class Main
 		if( r.equals( "0" ) )
 		{
 			//app.exampleAccessToDB();                // Example on how to connect to the DB.
-			r = app.createTables();
-			System.out.println( r );
+//			r = app.createTables();
+//			System.out.println( r );
 
 //			r = app.dropTables();
 //			System.out.println( r );
@@ -48,6 +48,7 @@ public class Main
 //
 //			r = app.deposit("1", 100.00);
 //			System.out.println(r);
+
 //			r = app.showBalance("3");
 //			System.out.println(r);
 
@@ -58,20 +59,19 @@ public class Main
 //			r = app.setDate(2010, 10, 10);
 //			System.out.println(r);
 
-			r = app.createCustomer("1", "80", "jack", "sb");
-			System.out.println(r);
-
+//			r = app.createCustomer("1", "100", "bori", "sb");
+//			System.out.println(r);
 
 //			r = app.topUp("2", 10);
 //			System.out.println(r);
 
-//			r = app.payFriend("2", "3", 5);
+//			r = app.payFriend("2", "3", 50);
 //			System.out.println(r);
 
-//			r = app.withdrawal("1", 19.99);
+//			r = app.withdrawal("1", 3);
 //			System.out.println(r);
 
-//			r = app.purchase("3", 1);
+//			r = app.purchase("2", 60);
 //			System.out.println(r);
 
 //			r = app.addPrimary("1", "2");
@@ -80,19 +80,25 @@ public class Main
 //			r = app.addCoowner("1", "2");
 //			System.out.println(r);
 
-//			r = app.transfer("10", "10", "2", 5);
+//			r = app.transfer("1", "4", "1", 6);
 //			System.out.println(r);
 
-//			r = app.collect("6", "5", 10);
+//			r = app.collect("2", "1", 10);
 //			System.out.println(r);
 
-//			r = app.wire("1", "2", "1", 10);
+//			r = app.wire("2", "2", "4", 10);
 //			System.out.println(r);
 
-//			r = app.writeCheck("4", 1);
+//			r = app.writeCheck("4", 4.00);
 //			System.out.println(r);
 
-//			r = app.ecryptPin();
+//			r = app.encryptPin("1717");
+//			System.out.println(r);
+
+//			app.verifyPin("100", "1234");
+//			app.setPin("100", "1717", "1234");
+
+//			r = app.deleteTransactions();
 //			System.out.println(r);
 
 		}
