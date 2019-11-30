@@ -28,8 +28,8 @@ public class Main
 		if( r.equals( "0" ) )
 		{
 			//app.exampleAccessToDB();                // Example on how to connect to the DB.
-//			r = app.createTables();
-//			System.out.println( r );
+			r = app.createTables();
+			System.out.println( r );
 
 //			r = app.dropTables();
 //			System.out.println( r );
@@ -58,8 +58,9 @@ public class Main
 //			r = app.setDate(2010, 10, 10);
 //			System.out.println(r);
 
-//			r = app.createCustomer("1", "2", "amy", "sb");
-//////			System.out.println(r);
+			r = app.createCustomer("1", "80", "jack", "sb");
+			System.out.println(r);
+
 
 //			r = app.topUp("2", 10);
 //			System.out.println(r);
@@ -88,8 +89,11 @@ public class Main
 //			r = app.wire("1", "2", "1", 10);
 //			System.out.println(r);
 
-			r = app.writeCheck("4", 1);
-			System.out.println(r);
+//			r = app.writeCheck("4", 1);
+//			System.out.println(r);
+
+//			r = app.ecryptPin();
+//			System.out.println(r);
 
 		}
 	}

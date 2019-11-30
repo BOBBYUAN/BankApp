@@ -9,6 +9,9 @@ import java.util.Scanner;
 import oracle.jdbc.pool.OracleDataSource;
 import oracle.jdbc.OracleConnection;
 import java.util.Calendar;
+import java.security.SecureRandom;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -89,10 +92,6 @@ public class App implements Testable
 			System.out.print( "\n\n\n" );
 
 		}
-
-
-
-
 	}
 
 	/**
@@ -289,7 +288,7 @@ public class App implements Testable
 					"cid varchar(20)," +
 					"cname varchar(20)," +
 					"address varchar(20)," +
-					"pin varchar(20)," +
+					"pin varchar(2056)," +   // changed to 2056 for pin hashing :D
 					"primary key(cid))";
 			String s2 =  "create table Account(" +
 					"aid integer," +
@@ -306,12 +305,8 @@ public class App implements Testable
 					"tid integer, " +
 					"tate date, " +
 					"ttype varchar(20)," +
-					"tid integer, " +
 					"amount decimal(13, 2), " +
-					"ttype varchar(20), " +
-					"fee decimal(13,2), " +
 					"check_number integer, " +
-					"balance decimal(13, 2), " +
 					"primary key(tid))";
 			String s4 = "create table Owners(" +
 					"	cid varchar(20), " +
@@ -527,14 +522,16 @@ public class App implements Testable
 			preparedStatement.setString(1, accountId);
 			ResultSet resultSet = preparedStatement.executeQuery();
 
+			String encryptedPin = encryptPin("1717");
+
 			if (resultSet.next())
 			{
-				String createCustomer = "insert into Customer(cid, cname, address, pin) values(?, ?, ?, 1717)";
+				String createCustomer = "insert into Customer(cid, cname, address, pin) values(?, ?, ?, ?)";
 				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(createCustomer);
 				preparedUpdateStatement.setString(1, tin);
 				preparedUpdateStatement.setString(2, name);
 				preparedUpdateStatement.setString(3, address);
-//				preparedUpdateStatement.setString(4, "1717"); ///come back to encrypt
+				preparedUpdateStatement.setString(4, encryptedPin);
 				preparedUpdateStatement.executeUpdate();
 			}
 			else
@@ -1462,7 +1459,7 @@ public class App implements Testable
 						preparedUpdateStatement.executeUpdate();
 
 						checkNumber = generateCheckNo();
-						// generated check number to store in transaction
+						// generated check number to store in transactions table
 						System.out.println(checkNumber);
 					}
 
@@ -1484,6 +1481,35 @@ public class App implements Testable
 		{
 			System.err.println(e.getMessage());
 			return "1";
+		}
+	}
+
+
+	public String encryptPin(String pin)
+	{
+
+		try
+		{
+			SecureRandom random = new SecureRandom();
+			byte[] salt = new byte[16];
+			random.nextBytes(salt);
+
+			String s = new String(salt);
+			System.out.println(s);
+
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(salt);
+			String passwordToHash = pin;
+			byte[] hashedPassword = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
+			String hp = new String(hashedPassword);
+			System.out.println(hp);
+			System.out.println(hp.length());
+			return hp;
+		}
+		catch (Exception e)
+		{
+			return "1";
+
 		}
 	}
 }
