@@ -981,7 +981,7 @@ public class App implements Testable
 		}
 	}
 
-	public String transfer(String from, String to, double amount)
+	public String transfer(String customerId, String from, String to, double amount)
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
@@ -990,6 +990,48 @@ public class App implements Testable
 				System.out.println("Amount must be positive");
 				return "1";
 			}
+			if (amount > 2000)
+			{
+				System.out.println("Amount cannot exceed $2,000");
+				return "1";
+			}
+
+			String checkIsPrimary = "select cid, primary from owners where cid = ? and aid = ?";
+			PreparedStatement p = _connection.prepareStatement(checkIsPrimary);
+			p.setString(1, customerId);
+			p.setString(2, from);
+			ResultSet resultSet = p.executeQuery();
+
+			if (!resultSet.next())
+			{
+				System.out.println("Invalid customerId or invalid source account id or invalid desination id");
+				return "1";
+			}
+			if (Integer.parseInt(resultSet.getString(2)) == 1)
+			{
+				System.out.println("Customer must be a primary account owner on source account to do transfer");
+				return "1";
+			}
+
+
+			String checkIsCoowner = "select cid, primary from owners where cid = ? and aid = ?";
+			p = _connection.prepareStatement(checkIsCoowner);
+			p.setString(1, customerId);
+			p.setString(2, to);
+			resultSet = p.executeQuery();
+
+
+			if (!resultSet.next())
+			{
+				System.out.println("Invalid customerId or invalid source account id or invalid desination id");
+				return "1";
+			}
+			if (Integer.parseInt(resultSet.getString(2)) == 0)
+			{
+				System.out.println("Customer must be a co owner on destination account to do transfer");
+				return "1";
+			}
+
 
 			String fromCheckingsOrSavings = "select balance, status from account where aid = ? and " +
 					"(account.type = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING' or account.type = 'SAVINGS')";
@@ -1022,10 +1064,10 @@ public class App implements Testable
 			}
 
 
-			fromCheckingsOrSavings = "select balance, status from account where aid = ? and " +
+			String toCheckingsOrSavings = "select balance, status from account where aid = ? and " +
 					"(account.type = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING' or account.type = 'SAVINGS')";
 
-			PreparedStatement toP = _connection.prepareStatement(fromCheckingsOrSavings);
+			PreparedStatement toP = _connection.prepareStatement(toCheckingsOrSavings);
 			toP.setString(1, to);
 			ResultSet resultSet2 = toP.executeQuery();
 
@@ -1068,6 +1110,8 @@ public class App implements Testable
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
+			double fee = 0.03 * amount;
+
 			String sql = "select balance, status from account where aid = ? and pocket_linked_to = ? and type = 'POCKET'";
 			PreparedStatement p = _connection.prepareStatement(sql);
 			p.setString(1, pocketId);
@@ -1086,7 +1130,7 @@ public class App implements Testable
 				}
 
 				pocketBal = resultSet.getDouble(1);
-				pocketBal = pocketBal - amount;
+				pocketBal = pocketBal - amount - fee;
 
 				if (pocketBal <= 0.01) {
 					System.out.println("Not enough funds");

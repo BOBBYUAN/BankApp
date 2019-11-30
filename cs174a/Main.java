@@ -79,10 +79,10 @@ public class Main
 //			r = app.addCoowner("1", "2");
 //			System.out.println(r);
 
-//			r = app.transfer("4", "1", -10);
-//			System.out.println(r);
+			r = app.transfer("10", "10", "2", 5);
+			System.out.println(r);
 
-//			r = app.collect("3", "1", 1);
+//			r = app.collect("6", "5", 10);
 //			System.out.println(r);
 
 		}
