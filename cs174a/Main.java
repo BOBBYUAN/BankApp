@@ -38,11 +38,11 @@ public class Main
 //			r = app.listClosedAccounts();
 //			System.out.println( r );
 
-			// Another example test.
+//			 Another example test.
 //			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "7", 1234.56, "12", "adfasdf", "Known" );
 //			System.out.println( r );
 //			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "1221", 1234.56, "54", "adfasdf", "Known" );
-////			System.out.println( r );
+//			System.out.println( r );
 //			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
 //			System.out.println( r );
 //
@@ -59,7 +59,7 @@ public class Main
 //			r = app.setDate(2010, 10, 10);
 //			System.out.println(r);
 
-//			r = app.createCustomer("1", "100", "bori", "sb");
+//			r = app.createCustomer("1", "10", "bori", "sb");
 //			System.out.println(r);
 
 //			r = app.topUp("2", 10);
@@ -100,6 +100,11 @@ public class Main
 
 //			r = app.deleteTransactions();
 //			System.out.println(r);
+
+//			r = app.getCustomerReport("2");
+//			System.out.println(r);
+
+
 
 		}
 	}

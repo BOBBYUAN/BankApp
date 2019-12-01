@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.security.SecureRandom;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -31,69 +33,6 @@ public class App implements Testable
 	App()
 	{
 		// TODO: Any actions you need.
-		int choice = 0;
-		String order;
-
-		while (choice != 10) {
-
-			Scanner sc = new Scanner(System.in);
-			System.out.println("Bank Teller");
-			System.out.println("1. Enter Check Transaction");
-			System.out.println("2. Generate Monthly Statement");
-			System.out.println("3. Listed Clost Accounts");
-			System.out.println("4. Generate Government Drug and Tax Evasion Report (DTER)");
-			System.out.println("5. Customer Report");
-			System.out.println("6. Add Interest");
-			System.out.println("7. Create Account");
-			System.out.println("8. Delete Closed Accounts and Customers");
-			System.out.println("9. Delete Transactions");
-			System.out.println("10. Exit");
-
-			System.out.println("Enter choice(1-10): ");
-
-			choice = sc.nextInt();
-
-			switch (choice) {
-				case 1:
-					order = "You just choose 1";
-					break;
-				case 2:
-					order = "You just choose 2";
-					break;
-				case 3:
-					order = "You just choose 3";
-					break;
-				case 4:
-					order = "You just choose 3";
-					break;
-				case 5:
-					order = "You just choose 3";
-					break;
-				case 6:
-					order = "You just choose 3";
-					break;
-				case 7:
-					order = "You just choose 3";
-					break;
-				case 8:
-					order = "You just choose 3";
-					break;
-				case 9:
-					order = "You just choose 3";
-					break;
-				case 10:
-					order = "To Exit";
-					break;
-
-				default:
-					order = "You didn't choose a option";
-
-
-			}
-			System.out.println("Here is your choice: " + order);
-			System.out.print( "\n\n\n" );
-
-		}
 	}
 
 	/**
@@ -150,6 +89,8 @@ public class App implements Testable
 			System.out.println( "Database Username is: " + _connection.getUserName() );
 			System.out.println();
 
+			uiMenu();
+
 			return "0";
 		}
 		catch( SQLException e )
@@ -157,6 +98,7 @@ public class App implements Testable
 			System.err.println( e.getMessage() );
 			return "1";
 		}
+
 	}
 
 	/**
@@ -205,7 +147,7 @@ public class App implements Testable
 				preparedStatement.setString(1,tin);
 				preparedStatement.setString(2, name);
 				preparedStatement.setString(3, address);
-				preparedStatement.setString(4, "17127");
+				preparedStatement.setString(4, encryptPin("1717"));
 				preparedStatement.executeQuery();
 
 
@@ -229,16 +171,17 @@ public class App implements Testable
 				preparedStatement.setString(1,tin);
 				preparedStatement.setString(2, name);
 				preparedStatement.setString(3, address);
-				preparedStatement.setString(4, "17127");
+				preparedStatement.setString(4, encryptPin("1717"));
 				preparedStatement.executeQuery();
 
-				String sql2 = "insert into studentcheckingaccount (aid,cid,branch_name,balance,interest) values (?,?,?,?,?)";
+				String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
 				preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
-				preparedStatement.setFloat(5, 0.15f);
+				preparedStatement.setString(5, "STUDENT_CHECKING");
+				preparedStatement.setFloat(6, 0.15f);
 				preparedStatement.executeQuery();
 
 
@@ -250,16 +193,17 @@ public class App implements Testable
 				preparedStatement.setString(1,tin);
 				preparedStatement.setString(2, name);
 				preparedStatement.setString(3, address);
-				preparedStatement.setString(4, "17127");
+				preparedStatement.setString(4, encryptPin("1717"));
 				preparedStatement.executeQuery();
 
-				String sql2 = "insert into savingaccount (aid,cid,branch_name,balance,interest) values (?,?,?,?,?)";
+				String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
 				preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
-				preparedStatement.setFloat(5, 0.15f);
+				preparedStatement.setString(5, "SAVINGS");
+				preparedStatement.setFloat(6, 0.15f);
 				preparedStatement.executeQuery();
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
@@ -493,6 +437,7 @@ public class App implements Testable
 			preparedStatement.setInt(8, Integer.parseInt(linkedId));
 			preparedStatement.executeUpdate();
 			System.out.println("SUCESS");
+
 			return "0";
 		}
 		catch( SQLException e )
@@ -1130,19 +1075,19 @@ public class App implements Testable
 		return "0";
 	}
 
-	public String collect(String pocketId, String parentAccountId, double amount)
+	public String collect(String pocketId,  double amount)
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
 			double fee = 0.03 * amount;
 
-			String sql = "select balance, status from account where aid = ? and pocket_linked_to = ? and type = 'POCKET'";
+			String sql = "select balance, status, pocket_linked_to from account where aid = ? and and type = 'POCKET'";
 			PreparedStatement p = _connection.prepareStatement(sql);
 			p.setString(1, pocketId);
-			p.setString(2, parentAccountId);
 			ResultSet resultSet = p.executeQuery();
 			double parentBal;
 			double pocketBal;
+			String parentAccountId;
 
 			if (resultSet.next())
 			{
@@ -1153,6 +1098,9 @@ public class App implements Testable
 					return "1";
 				}
 
+				parentAccountId = resultSet.getString(3);
+				System.out.println("HELLO!!!!");
+				System.out.println(parentAccountId);
 				pocketBal = resultSet.getDouble(1);
 				pocketBal = pocketBal - amount - fee;
 
@@ -1460,8 +1408,12 @@ public class App implements Testable
 
 	public String writeCheck(String accountId, double amount)
 	{
+		System.out.println(accountId);
+		System.out.println(amount);
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
+			System.out.println("HELLOE");
+
 			if (amount < 0)
 			{
 				System.out.println("Amount must be positive");
@@ -1682,4 +1634,310 @@ public class App implements Testable
 //			return "1";
 //		}
 //	}
+
+	public String getCustomerReport(String cid)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String s = "select cid from customer where cid = ?";
+			PreparedStatement ps = _connection.prepareStatement(s);
+			ps.setString(1, cid);
+			ResultSet resultSet = ps.executeQuery();
+
+			if(!resultSet.next())
+			{
+				System.out.println("Invalid tax id number");
+				return "1";
+			}
+			else
+			{
+				String sql = "select A.aid, A.status from owners O, account A where O.cid = ? and A.aid = O.aid";
+				PreparedStatement p = _connection.prepareStatement(sql);
+				p.setString(1, cid);
+				ResultSet rs = p.executeQuery();
+
+				HashMap<String, Integer> accountStatus = new HashMap<>();
+
+				while (rs.next()) {
+					accountStatus.put(rs.getString(1), rs.getInt(2));
+				}
+
+				for (String i : accountStatus.keySet()) {
+					String key = i;
+					Integer value = accountStatus.get(i);
+					System.out.println(key + " " + value);
+				}
+			}
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+		return "0";
+	}
+
+//	public String generateMonthlyStatement
+//	{
+//		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+//		{
+//
+//
+//		}
+//		catch(SQLException e)
+//		{
+//			System.err.println(e.getMessage());
+//			return "1";
+//		}
+//
+//	}
+
+	public void bankTeller()
+	{
+		int choice = 0;
+		String selected = "";
+
+
+		while (choice != 10) {
+
+			Scanner sc = new Scanner(System.in);
+			System.out.println("Bank Teller");
+			System.out.println("1. Enter Check Transaction");
+			System.out.println("2. Generate Monthly Statement");
+			System.out.println("3. List Closed Accounts");
+			System.out.println("4. Generate Government Drug and Tax Evasion Report (DTER)");
+			System.out.println("5. Customer Report");
+			System.out.println("6. Add Interest");
+			System.out.println("7. Create Account");
+			System.out.println("8. Delete Closed Accounts and Customers");
+			System.out.println("9. Delete Transactions");
+			System.out.println("10. Exit");
+
+			System.out.print("Enter choice(1-10): ");
+
+			choice = sc.nextInt();
+
+			switch (choice) {
+				case 1:
+					System.out.print("Enter account id: ");
+					String accId = sc.next();
+					System.out.print("Enter amount: ");
+					double a = sc.nextDouble();
+					writeCheck(accId, a);
+					break;
+				case 2:
+					System.out.print("Enter account id: ");
+					accId = sc.next();
+					System.out.println("Generate Monthly Statement");   // to do
+					break;
+				case 3:
+					listClosedAccounts();
+					break;
+				case 4:
+					System.out.print("Enter account id: ");
+					accId = sc.next();
+					System.out.println("Generate Government Drug and Tax Evasion Report (DTER)"); // to do
+					break;
+				case 5:
+					System.out.print("Enter tax identification number: ");
+					String tid = sc.next();
+					getCustomerReport(tid);
+					break;
+				case 6:
+					System.out.print("Enter account id: ");
+					accId = sc.next();
+					System.out.println("Add interest"); // to do
+					break;
+				case 7:
+					System.out.println("Select what type of account you would like to create: ");
+					System.out.println("1. Interest Checking");
+					System.out.println("2. Student Checking");
+					System.out.println("3. Savings");
+					System.out.println("4. Pocket");
+
+					int choice2 = sc.nextInt();
+
+
+					System.out.print("What is your tax identification number? ");
+					tid = sc.next();
+
+					System.out.print("Please write a 5 digit account id number to be associated with your account: ");
+					String aid = sc.next();
+
+
+					switch (choice2)
+					{
+						case 1:
+							System.out.print("What is your name? ");
+							String n = sc.next();
+							System.out.print("What is your address? ");
+							String add = sc.next();
+
+							createCheckingSavingsAccount(AccountType.INTEREST_CHECKING, aid, 1000, tid, n, add);
+							break;
+						case 2:
+							System.out.print("What is your name? ");
+							n = sc.next();
+							System.out.print("What is your address? ");
+							add = sc.next();
+
+							createCheckingSavingsAccount(AccountType.STUDENT_CHECKING, aid, 1000, tid, n, add);
+							break;
+						case 3:
+							System.out.print("What is your name? ");
+							n = sc.next();
+							System.out.print("What is your address? ");
+							add = sc.next();
+
+							createCheckingSavingsAccount(AccountType.SAVINGS, aid, 1000, tid, n, add);
+							break;
+						case 4:
+							System.out.print("What checking/savings account id do you wish to link your pocket account to? ");
+							String linked = sc.next();
+							createPocketAccount(aid, linked, 50, tid);
+							break;
+					}
+					break;
+				case 8:
+					System.out.println("Deleting closed accounts and customers.");
+					// deleteClosedAccountsAndCustomers()
+					break;
+				case 9:
+					System.out.println("Deleting transactions.");
+					deleteTransactions();
+					break;
+				case 10:
+					selected = "Exiting BankTeller!";
+					break;
+				default:
+					selected = "You didn't choose a option";
+					break;
+			}
+
+		}
+	}
+
+	public void atm()
+	{
+		Scanner sc = new Scanner(System.in);
+		int choice = 0;
+		System.out.println("Welcome to ATM");
+		System.out.println("Please enter tax identification number: ");
+		String tid = sc.next();
+		//check if user exists
+		System.out.println("Please enter pin: ");
+		String pin = sc.next();
+		if (verifyPin(tid, pin))
+		{
+			System.out.println("YES");
+			System.out.println("Choose one of the following options:");
+			System.out.println("1: Deposit");
+			System.out.println("2: Top-Up");
+			System.out.println("3: Withdrawal");
+			System.out.println("4: Purchase");
+			System.out.println("5: Transfer");
+			System.out.println("6: Collect");
+			System.out.println("7: Pay-Friend");
+			System.out.println("8: Wire");
+			System.out.println("9: Write-Check");
+			System.out.println("10: Accrue-Interest");
+			System.out.println("11: Exit ATM");
+
+			choice = sc.nextInt();
+			switch(choice)
+			{
+				case 1:
+					System.out.println("To which account would you like to deposit? "); //fix why it doesnt show wrong errors
+					String accId = sc.next();
+					System.out.print("How much would you like to deposit? ");
+					double a = sc.nextDouble();
+					deposit(accId, a);
+					break;
+
+				case 2:
+					System.out.println("Which pocket account id would you like to top up? "); // works
+					accId = sc.next();
+					System.out.print("How much would you like to top-up? ");
+					a = sc.nextDouble();
+					topUp(accId, a);
+					break;
+
+				case 3:
+					System.out.print("From which account would you like to withdraw? "); // works
+					accId = sc.next();
+					System.out.print("How much would you like to withdraw? ");
+					a = sc.nextDouble();
+					withdrawal(accId, a);
+					break;
+
+				case 4:
+					System.out.print("From which pokcet account id would you like to purchase? "); // works
+					accId = sc.next();
+					System.out.print("How much would you like to purchase? ");
+					a = sc.nextDouble();
+					purchase(accId, a);
+					break;
+
+				case 5:
+					System.out.print("From which checkings/savings account would you like to transfer? ");
+					String from = sc.next();
+					System.out.print("To which checkings/savings account would you like to transfer? ");
+					String to = sc.next();
+					System.out.print("How much would you like to transfer? ");
+					a = sc.nextDouble();
+					transfer(tid, from, to, a);
+					break;
+
+				case 6:
+					System.out.print("From which pocket account would you like to collect money from? ");
+					accId = sc.next();
+					System.out.print("How much would you like to collect? ");
+					a = sc.nextDouble();
+					collect(accId, a);
+					break;
+
+				default:
+					System.out.println("Please choose an option");
+					break;
+			}
+
+		}
+		else
+		{
+			System.out.println("Sorry wrong pin");
+		}
+	}
+
+	public void uiMenu()
+	{
+		Scanner sc = new Scanner(System.in);
+		int choice = 0;
+		System.out.println("Choose one of the following options:");
+		System.out.println("0: Show customer interface");
+		System.out.println("1: Show bank teller");
+		System.out.println("2: Set system date");
+		System.out.println("3: Exit application");
+
+		choice = sc.nextInt();
+
+		switch (choice)
+		{
+			case 0:
+				atm();
+				break;
+			case 1:
+				bankTeller();
+				break;
+			case 2:
+				System.out.println("Set date");
+				break;
+			case 3:
+				System.out.println("Exiting");
+				break;
+			default:
+				System.out.println("Please choose an option");
+				break;
+		}
+	}
+
 }
