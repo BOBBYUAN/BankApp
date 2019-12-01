@@ -1081,7 +1081,7 @@ public class App implements Testable
 		{
 			double fee = 0.03 * amount;
 
-			String sql = "select balance, status, pocket_linked_to from account where aid = ? and and type = 'POCKET'";
+			String sql = "select balance, status, pocket_linked_to from account where aid = ? and type = 'POCKET'";
 			PreparedStatement p = _connection.prepareStatement(sql);
 			p.setString(1, pocketId);
 			ResultSet resultSet = p.executeQuery();
@@ -1099,8 +1099,6 @@ public class App implements Testable
 				}
 
 				parentAccountId = resultSet.getString(3);
-				System.out.println("HELLO!!!!");
-				System.out.println(parentAccountId);
 				pocketBal = resultSet.getDouble(1);
 				pocketBal = pocketBal - amount - fee;
 
@@ -1839,9 +1837,7 @@ public class App implements Testable
 			System.out.println("6: Collect");
 			System.out.println("7: Pay-Friend");
 			System.out.println("8: Wire");
-			System.out.println("9: Write-Check");
-			System.out.println("10: Accrue-Interest");
-			System.out.println("11: Exit ATM");
+			System.out.println("9: Exit ATM");
 
 			choice = sc.nextInt();
 			switch(choice)
@@ -1889,11 +1885,31 @@ public class App implements Testable
 					break;
 
 				case 6:
-					System.out.print("From which pocket account would you like to collect money from? ");
+					System.out.print("From which pocket account would you like to collect money from? "); // words
 					accId = sc.next();
 					System.out.print("How much would you like to collect? ");
 					a = sc.nextDouble();
 					collect(accId, a);
+					break;
+
+				case 7:
+					System.out.print("From which pocket account would you like to pay from? "); // works
+					from = sc.next();
+					System.out.print("To which pocket account would you like to pay? ");
+					to = sc.next();
+					System.out.print("How much would you like to pay? ");
+					a = sc.nextDouble();
+					payFriend(from, to, a);
+					break;
+
+				case 8:
+					System.out.print("From which checking/savings account would you like to wire from? "); // works
+					from = sc.next();
+					System.out.print("To which checking/savings would you like to wire to? ");
+					to = sc.next();
+					System.out.print("How much would you like to wire? ");
+					a = sc.nextDouble();
+					wire(tid, from, to, a);
 					break;
 
 				default:
