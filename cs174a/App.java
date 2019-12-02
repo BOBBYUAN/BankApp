@@ -778,7 +778,6 @@ public class App implements Testable
 
 	@Override
 	public String payFriend( String from, String to, double amount ) // come back to fix cid check ownership
-	public String payFriend( String from, String to, double amount ) // come back to fix cid check ownership
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
@@ -853,7 +852,7 @@ public class App implements Testable
 
 				preparedUpdateStatement.executeUpdate();
 
-				addTransaction(this.getName(customerTaxID) "pays friend", amount, from, to, null);
+				addTransaction(this.getName(customerTaxID), "pays friend", amount, from, to, null);
 
 			}
 			else
@@ -1974,6 +1973,9 @@ public class App implements Testable
 					printReport(aid);
 				}
 			}
+			insuranceMonthlyReport(customerId);
+			System.out.println("-----------------------------");
+
 		return "0";
 		}
 		catch(SQLException e)
@@ -1981,6 +1983,49 @@ public class App implements Testable
 			System.err.println(e.getMessage());
 			return "1";
 		}
+	}
+
+	public String insuranceMonthlyReport(String cid)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String s = "select aid from owners where cid = ? and primary = 0";
+			PreparedStatement ps = _connection.prepareStatement(s);
+			ps.setString(1, cid);
+			ResultSet resultSet = ps.executeQuery();
+
+			ArrayList<String> aids = new ArrayList<String>();
+			while(resultSet.next())
+			{
+				aids.add(resultSet.getString(1));
+			}
+
+			double total = 0.0;
+			for(int i = 0; i < aids.size(); i++)
+			{
+				s = "select balance from account where aid = ?";
+				ps = _connection.prepareStatement(s);
+				ps.setString(1, aids.get(i));
+				resultSet = ps.executeQuery();
+
+				while(resultSet.next())
+				{
+					total += resultSet.getDouble(1);
+				}
+			}
+			if(total > 100000)
+			{
+				System.out.println("Warning! You have reached the limit of $100,000");
+				return "1";
+			}
+			return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+
 	}
 
 	// need to be updated
