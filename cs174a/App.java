@@ -70,8 +70,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##wangcheng";
-		final String DB_PASSWORD = "7429699";
+		final String DB_USER = "c##grousseva";
+		final String DB_PASSWORD = "8611311";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();
@@ -464,7 +464,7 @@ public class App implements Testable
 			preparedUpdateStatement.setString(2, accountId);
 
 			preparedUpdateStatement.executeUpdate();
-			addTransaction(customerTaxID, "deposit", amount, accountId, null, null);
+			addTransaction(this.getName(customerTaxID), "deposit", amount, accountId, null, null);
 
 			return "0 " + oldBalance + " " + newBalance;
 
@@ -753,7 +753,7 @@ public class App implements Testable
 
 						preparedUpdateStatement.executeUpdate();
 
-						addTransaction("glen", "tops up", amount, parentId, accountId, null);
+						addTransaction(this.getName(customerTaxID), "tops up", amount, parentId, accountId, null);
 
 					}
 
@@ -777,6 +777,7 @@ public class App implements Testable
 	}
 
 	@Override
+	public String payFriend( String from, String to, double amount ) // come back to fix cid check ownership
 	public String payFriend( String from, String to, double amount ) // come back to fix cid check ownership
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
@@ -852,7 +853,7 @@ public class App implements Testable
 
 				preparedUpdateStatement.executeUpdate();
 
-				addTransaction("glen", "pays friend", amount, from, to, null);
+				addTransaction(this.getName(customerTaxID) "pays friend", amount, from, to, null);
 
 			}
 			else
@@ -918,7 +919,7 @@ public class App implements Testable
 					preparedUpdateStatement.setInt(2, 1);
 					preparedUpdateStatement.setString(3, accountId);
 					preparedUpdateStatement.executeUpdate();
-					addTransaction("glen", "withdrawal", amount, accountId, null, null);
+					addTransaction(this.getName(customerTaxID), "withdrawal", amount, accountId, null, null);
 
 					System.out.println("Account closed"); /// come back to fix
 					return "0";
@@ -934,7 +935,7 @@ public class App implements Testable
 					preparedUpdateStatement.setString(2, accountId);
 					preparedUpdateStatement.executeUpdate();
 
-					addTransaction("glen", "withdrawal", amount, accountId, null, null);
+					addTransaction(this.getName(customerTaxID), "withdrawal", amount, accountId, null, null);
 
 					return ("0 " + bal + " " + newBal);
 
@@ -1002,7 +1003,7 @@ public class App implements Testable
 					preparedUpdateStatement.setString(3, accountId);
 					preparedUpdateStatement.executeUpdate();
 
-					addTransaction("glen", "purchase", amount, accountId, null, null);
+					addTransaction(this.getName(customerTaxID), "purchase", amount, accountId, null, null);
 
 					System.out.println("Account closed"); /// come back to fix
 				} else if (newBal < 0) {
@@ -1017,7 +1018,7 @@ public class App implements Testable
 					preparedUpdateStatement.setString(2, accountId);
 					preparedUpdateStatement.executeUpdate();
 
-					addTransaction("glen", "purchases", amount, accountId, null, null);
+					addTransaction(this.getName(customerTaxID), "purchases", amount, accountId, null, null);
 
 				}
 
@@ -1282,7 +1283,7 @@ public class App implements Testable
 
 				preparedUpdateStatement.executeUpdate();
 
-				addTransaction("glen", "trasnfers", amount, from, to, null);
+				addTransaction(this.getName(customerTaxID), "trasnfers", amount, from, to, null);
 
 			}
 
@@ -1357,7 +1358,7 @@ public class App implements Testable
 
 				preparedUpdateStatement.executeUpdate();
 
-				addTransaction("glen", "collects", amount, pocketId, parentAccountId, null);
+				addTransaction(this.getName(customerTaxID), "collects", amount, pocketId, parentAccountId, null);
 
 			}
 			else
@@ -1563,7 +1564,7 @@ public class App implements Testable
 
 						preparedUpdateStatement.executeUpdate();
 
-						addTransaction("glen", "wires", amount, from, to, null);
+						addTransaction(this.getName(customerTaxID), "wires", amount, from, to, null);
 					}
 
 				}
@@ -1669,7 +1670,7 @@ public class App implements Testable
 						checkNumber = generateCheckNo();
 						String checkN = Integer.toString(checkNumber);
 
-						addTransaction("glen", "writes a check", amount, accountId, null, checkN);
+						addTransaction(this.getName(customerTaxID), "writes a check", amount, accountId, null, checkN);
 
 					}
 
@@ -2143,7 +2144,7 @@ public class App implements Testable
 
 				preparedUpdateStatement.executeUpdate();
 
-				addTransaction("Bob", "add interest", 0.0, accountId, null, null);
+				addTransaction(this.getName(customerTaxID), "add interest", 0.0, accountId, null, null);
 			}
 			else
 			{
@@ -2295,7 +2296,7 @@ public class App implements Testable
 			preparedUpdateStatement.setString(2, accountId);
 
 			preparedUpdateStatement.executeUpdate();
-			addTransaction("", "accrues interest", amount, null, accountId, null);
+			addTransaction(this.getName(customerTaxID), "accrues interest", amount, null, accountId, null);
 
 			return "0 " + oldBalance + " " + newBalance;
 		}
