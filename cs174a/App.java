@@ -15,6 +15,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.*;
+import java.util.*;
+import java.util.Date;
+import java.io.*;
+import java.text.SimpleDateFormat;
+
 
 
 /**
@@ -24,7 +29,7 @@ import java.util.*;
 public class App implements Testable
 {
 	private OracleConnection _connection;                   // Example connection object to your DB.
-	static String salt = "glennie-rousseva"; 				// for password encryption
+	static String salt = "glennie-rousseva";				// for password encryption
 
 
 	/**
@@ -266,12 +271,14 @@ public class App implements Testable
 					"foreign key(cid) references Customer(cid) on delete cascade," +
 					"foreign key(aid) references Account(aid) on delete cascade)";
 			String s5 = "create sequence tid start with 1 increment by 1";
+			String s6 = "create table Settings(current_date date)";
 
 //			statement.addBatch(s1);
 //			statement.addBatch(s2);
 //			statement.addBatch(s3);
 //			statement.addBatch(s4);
-			statement.addBatch(s5);
+//			statement.addBatch(s5);
+			statement.addBatch(s6);
 			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
@@ -396,7 +403,7 @@ public class App implements Testable
 	}
 
 	@Override
-	public String createPocketAccount( String id, String linkedId, double initialTopUp, String tin)
+	public String createPocketAccount( String id, String linkedId, double initialTopUp, String tin )
 	{
 		String accountID = "";
 		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
@@ -449,16 +456,30 @@ public class App implements Testable
 	}
 
 	@Override
-	public String setDate( int year, int month, int day)
+	public String setDate( int year, int month, int day )
 	{
-		// java months are 0 based, ex. if you want month date to be november, put 10 instead of 11
-		Calendar cal = Calendar.getInstance();
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			cal.set(year, month, day);
-			String d = Integer.toString(year) + "-" + Integer.toString(month)  + "-" + Integer.toString(day);
-			cal.getTime();
-			return "date is: " + d + "\n" + cal.getTime();
+			Date dt;
+			String s = Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day);
+			System.out.println(s);
+			try
+			{
+				dt = new SimpleDateFormat("yyyy-MM-dd").parse(s);
+				System.out.println(dt.toString());
+			}
+			catch (java.text.ParseException e)
+			{
+				System.out.println(e.getMessage());
+			}
+
+			String createPrimary = "insert into Settings(current_date) values(to_date(?, 'YYYY-MM-DD'))";
+
+			PreparedStatement insert = _connection.prepareStatement(createPrimary);
+			insert.setDate(1, java.sql.Date.valueOf("2013-09-04")); //even hard coding doesnt work...
+			insert.setString(1, s);
+			insert.executeUpdate();
+			return "0";
 		}
 		catch( SQLException e)
 		{
@@ -589,7 +610,7 @@ public class App implements Testable
 	}
 
 	@Override
-	public String payFriend(String from, String to, double amount ) // come back to fix cid check ownership
+	public String payFriend( String from, String to, double amount ) // come back to fix cid check ownership
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
@@ -1858,7 +1879,7 @@ public class App implements Testable
 		String selected = "";
 
 
-		while (choice != 10) {
+		while (choice != 11) {
 
 			Scanner sc = new Scanner(System.in);
 			System.out.println("Bank Teller");
@@ -1871,9 +1892,10 @@ public class App implements Testable
 			System.out.println("7. Create Account");
 			System.out.println("8. Delete Closed Accounts and Customers");
 			System.out.println("9. Delete Transactions");
-			System.out.println("10. Exit");
+			System.out.println("10. Set Date");
+			System.out.println("11. Exit");
 
-			System.out.print("Enter choice(1-10): ");
+			System.out.print("Enter choice(1-11): ");
 
 			choice = sc.nextInt();
 
@@ -1967,6 +1989,15 @@ public class App implements Testable
 					deleteTransactions();
 					break;
 				case 10:
+					System.out.println("What year? ");
+					int y = sc.nextInt();
+					System.out.println("What month? ");
+					int m = sc.nextInt();
+					System.out.println("What day? ");
+					int da = sc.nextInt();
+					setDate(y, m, da);
+					break;
+				case 11:
 					selected = "Exiting BankTeller!";
 					break;
 				default:
