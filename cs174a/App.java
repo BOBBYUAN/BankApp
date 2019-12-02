@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.*;
+import java.sql.Time;
 import java.util.Properties;
 import java.util.Scanner;
 import oracle.jdbc.pool.OracleDataSource;
@@ -19,7 +20,7 @@ import java.util.Date;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
-
+import java.time.LocalDate;
 
 /**
  * The most important class for your application.
@@ -69,8 +70,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##grousseva";
-		final String DB_PASSWORD = "8611311";
+		final String DB_USER = "c##wangcheng";
+		final String DB_PASSWORD = "7429699";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();
@@ -320,7 +321,6 @@ public class App implements Testable
 		//return "0 " + id + " " + accountType + " " + initialBalance + " " + tin;
 	}
 
-
 	@Override
 	public String createTables() {
 		try( Statement statement = _connection.createStatement() )
@@ -362,7 +362,7 @@ public class App implements Testable
 					"foreign key(cid) references Customer(cid) on delete cascade," +
 					"foreign key(aid) references Account(aid) on delete cascade)";
 			String s5 = "create sequence tid start with 1 increment by 1";
-//			String s6 = "create table Settings(current_date date)";
+			String s6 = "create table Settings(current_date date)";
 
 			// not quite sure the syntax we create table like that
 			String s7 = "create table SETTINGTIMES ( id int, settime date, primary key(id))";
@@ -568,6 +568,7 @@ public class App implements Testable
 
 		//java.util.Date date = parseDate(date_str);
 
+
 		final String INSERT_INTO_System_Date = "INSERT INTO SETTINGTIMES "
 				+ "VALUES (?,?)";
 
@@ -577,10 +578,14 @@ public class App implements Testable
 			PreparedStatement p = _connection.prepareStatement(SQL);
 			p.executeUpdate();
 
+
 			ps = _connection.prepareStatement(INSERT_INTO_System_Date);
 			ps.setInt(1,3); // now here it doesn't matter primary key auto increment
 			ps.setDate(2,sqdate_str);
 			ps.executeUpdate();
+
+
+
 			System.out.println("Date inserted: " + date_str);
 //			Date dt;
 //			String s = Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day);
@@ -904,26 +909,43 @@ public class App implements Testable
 				newBal = bal - amount;
 				System.out.println(newBal);
 
-				if (newBal <= 0.01)
+				// if the balance is 0.00 or 0.01, then we close the account
+				if (newBal == 0.01 || newBal == 0.00)
 				{
+					String closeAccount = "update account set balance = ?, status = ? where aid = ? ";
+					PreparedStatement preparedUpdateStatement = _connection.prepareStatement(closeAccount);
+					preparedUpdateStatement.setDouble(1, newBal);
+					preparedUpdateStatement.setInt(2, 1);
+					preparedUpdateStatement.setString(3, accountId);
+					preparedUpdateStatement.executeUpdate();
+					addTransaction("glen", "withdrawal", amount, accountId, null, null);
+
 					System.out.println("Account closed"); /// come back to fix
-					return "1";
+					return "0";
+				} else if (newBal < 0) {     // if the new balance is less than 0, then we need to close the transaction
+											 // but the account still opens
+
+					return "Transactions fail";
+
+				} else {                    // nothing closed
+					String update = "update account set balance = ? where aid = ?";
+					PreparedStatement preparedUpdateStatement = _connection.prepareStatement(update);
+					preparedUpdateStatement.setDouble(1, newBal);
+					preparedUpdateStatement.setString(2, accountId);
+					preparedUpdateStatement.executeUpdate();
+
+					addTransaction("glen", "withdrawal", amount, accountId, null, null);
+
+					return ("0 " + bal + " " + newBal);
+
 				}
-
-				String update = "update account set balance = ? where aid = ?";
-				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(update);
-				preparedUpdateStatement.setDouble(1, newBal);
-				preparedUpdateStatement.setString(2, accountId);
-				preparedUpdateStatement.executeUpdate();
-
-				addTransaction("glen", "withdrawal", amount, accountId, null, null);
 			}
 			else
 			{
 				System.out.println("Account id is not valid");
 				return "1";
 			}
-			return ("0 " + bal + " " + newBal);
+			//return ("0 " + bal + " " + newBal);
 
 		}
 		catch(SQLException e)
@@ -971,19 +993,33 @@ public class App implements Testable
 				bal = Double.parseDouble(resultSet.getString(1));
 				newBal = bal - amount;
 
-				if (newBal <= 0.01)
+				if (newBal == 0.01 || newBal == 0.0)
 				{
+					String closeAccount = "update account set balance = ?, status = ? where aid = ? ";
+					PreparedStatement preparedUpdateStatement = _connection.prepareStatement(closeAccount);
+					preparedUpdateStatement.setDouble(1, newBal);
+					preparedUpdateStatement.setInt(2, 1);
+					preparedUpdateStatement.setString(3, accountId);
+					preparedUpdateStatement.executeUpdate();
+
+					addTransaction("glen", "purchase", amount, accountId, null, null);
+
 					System.out.println("Account closed"); /// come back to fix
-					return "1";
+				} else if (newBal < 0) {
+
+					return "Transactions fail";
+
+				} else {
+
+					String update = "update account set balance = ? where aid = ?";
+					PreparedStatement preparedUpdateStatement = _connection.prepareStatement(update);
+					preparedUpdateStatement.setDouble(1, newBal);
+					preparedUpdateStatement.setString(2, accountId);
+					preparedUpdateStatement.executeUpdate();
+
+					addTransaction("glen", "purchases", amount, accountId, null, null);
+
 				}
-
-				String update = "update account set balance = ? where aid = ?";
-				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(update);
-				preparedUpdateStatement.setDouble(1, newBal);
-				preparedUpdateStatement.setString(2, accountId);
-				preparedUpdateStatement.executeUpdate();
-
-				addTransaction("glen", "purchases", amount, accountId, null, null);
 
 			}
 			else
@@ -1811,7 +1847,44 @@ public class App implements Testable
 //	{
 //		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 //		{
+//			// check the date whether is the last day of the month
+//			ResultSet resultSet = statement.executeQuery( "select SETTIME from SETTINGTIMES ORDER BY id DESC FETCH FIRST 1 ROWS ONLY" );
 //
+//			if( resultSet.next() ) {
+//
+//				java.sql.Date dbSqlDate = resultSet.getDate("SETTIME");
+//				java.util.Date dbSqlDateConverted = new java.util.Date(dbSqlDate.getTime());
+//				SimpleDateFormat simpleDateformat = new SimpleDateFormat("MM"); // two digit numerical represenation
+//				System.out.println(simpleDateformat.format(dbSqlDateConverted));
+//
+//				//if () {   // for template: the date is the last date of the month
+//
+//					String sql2 = "select account.aid from account where account.status = 1";
+//					PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
+//					preparedStatement.executeQuery( "delete from account where account.status = 1" );
+//
+//					ResultSet resultSet2 = preparedStatement.executeQuery(); // get the result from sql2
+//
+//					while (resultSet2.next()) {
+//
+//						String aid = resultSet2.getString("AID");
+//
+//						Resultset resultset3 = preparedStatementForPocket.executeQuery();
+//
+//						if (resultset3.next()) {
+//							String sql4 = "delete from account where account.id = ?";
+//							PreparedStatement preparedStatementForPocket = _connection.prepareStatement(sql4);
+//							preparedStatementForPocket.setString(aid);
+//							preparedStatementForPocket.executeUpdate();
+//						}
+//
+//					}
+//					// if the date is the last day of the month
+//				//} else {
+//				//	return "1 the date is not the last day of the month";
+//				//}
+//			}
+//			return "1";
 //		}
 //		catch(SQLException e)
 //		{
@@ -2518,7 +2591,7 @@ public class App implements Testable
 					break;
 				case 8:
 					System.out.println("Deleting closed accounts and customers.");
-					// deleteClosedAccountsAndCustomers()
+					 //deleteClosedAccountsAndCustomers();
 					break;
 				case 9:
 					System.out.println("Deleting transactions.");
