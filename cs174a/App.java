@@ -15,11 +15,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.*;
-import java.util.*;
 import java.util.Date;
 import java.io.*;
 import java.text.SimpleDateFormat;
-
+import java.text.ParseException;
 
 
 /**
@@ -69,8 +68,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##grousseva";
-		final String DB_PASSWORD = "8611311";
+		final String DB_USER = "c##wangcheng";
+		final String DB_PASSWORD = "7429699";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();
@@ -273,6 +272,12 @@ public class App implements Testable
 			String s5 = "create sequence tid start with 1 increment by 1";
 			String s6 = "create table Settings(current_date date)";
 
+			// not quite sure the syntax we create table like that
+			String s7 = "create table SETTINGTIMES ( id int, settime date, primary key(id))";
+			String s8 = "create sequence  SETTINGTIMES_seq";
+			String s9 = "create or replace trigger SETTINGTIMES_trg";
+			String s10 = "before insert on SETTINGTIMES for each row begin select SETTINGTIMES_seq.nextval into :new.id from dual; end";
+
 //			statement.addBatch(s1);
 //			statement.addBatch(s2);
 //			statement.addBatch(s3);
@@ -458,33 +463,61 @@ public class App implements Testable
 	@Override
 	public String setDate( int year, int month, int day )
 	{
+
+		String r = "0 ";
+		PreparedStatement ps = null;
+		String date_str = Integer.toString(year) + '-' + Integer.toString(month) + '-' + Integer.toString(day);
+		//SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+		//java.util.Date udate_str = sdf1.parse(date_str);
+		java.sql.Date sqdate_str = java.sql.Date.valueOf(date_str);
+
+		//java.util.Date date = parseDate(date_str);
+
+		final String INSERT_INTO_System_Date = "INSERT INTO SETTINGTIMES "
+				+ "VALUES (?,?)";
+
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			Date dt;
-			String s = Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day);
-			System.out.println(s);
-			try
-			{
-				dt = new SimpleDateFormat("yyyy-MM-dd").parse(s);
-				System.out.println(dt.toString());
-			}
-			catch (java.text.ParseException e)
-			{
-				System.out.println(e.getMessage());
-			}
-
-			String createPrimary = "insert into Settings(current_date) values(to_date(?, 'YYYY-MM-DD'))";
-
-			PreparedStatement insert = _connection.prepareStatement(createPrimary);
-			insert.setDate(1, java.sql.Date.valueOf("2013-09-04")); //even hard coding doesnt work...
-			insert.setString(1, s);
-			insert.executeUpdate();
-			return "0";
+			ps = _connection.prepareStatement(INSERT_INTO_System_Date);
+			ps.setInt(1,3); // now here it doesn't matter primary key auto increment
+			ps.setDate(2,sqdate_str);
+			ps.executeUpdate();
+			System.out.println("Date inserted: " + date_str);
+//			Date dt;
+//			String s = Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day);
+//			System.out.println(s);
+//			try
+//			{
+//				dt = new SimpleDateFormat("yyyy-MM-dd").parse(s);
+//				System.out.println(dt.toString());
+//			}
+//			catch (java.text.ParseException e)
+//			{
+//				System.out.println(e.getMessage());
+//			}
+//
+//			String createPrimary = "insert into Settings(current_date) values(to_date(?, 'YYYY-MM-DD'))";
+//			PreparedStatement insert = _connection.prepareStatement(createPrimary);
+//			insert.setDate(1, java.sql.Date.valueOf("2013-09-04")); //even hard coding doesnt work...
+//			insert.setString(1, s);
+//			insert.executeUpdate();
+//			return "0";
 		}
 		catch( SQLException e)
 		{
-			System.err.println( e.getMessage() );
-			return "1";
+			e.printStackTrace();
+			r = "1 ";
+//			System.err.println( e.getMessage() );
+//			return "1";
+		}
+		return r + date_str;
+	}
+
+	public static Date parseDate(String date) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+		} catch (ParseException e) {
+			return null;
 		}
 	}
 
@@ -1600,6 +1633,9 @@ public class App implements Testable
 
 	}
 
+
+
+	// confused about transaction date, should it be the current date? or something else
 	public String addTransaction(String customerName, String trans_type, double amount, String from, String to, String checkNumber)
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
@@ -1744,6 +1780,7 @@ public class App implements Testable
 		}
 	}
 
+	// need to be updated
 	public String printReport(String accountId)
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
@@ -1872,6 +1909,90 @@ public class App implements Testable
 		}
 	}
 
+	public void addInterest(String accountId, float interest) {
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+
+			float oldInterest  = 0.0f;
+			float newInterest = 0.0f;
+
+			String sql = "select account.interest from account where account.aid = ? and account.status = 0";
+			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
+			preparedStatement.setString(1, accountId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			if (resultSet.next())
+			{
+
+				oldInterest = resultSet.getFloat("interest");
+				newInterest = oldInterest + interest;
+
+				String addInterest = "update account set account.interest = ? where account.aid = ?";
+				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(addInterest);
+				preparedUpdateStatement.setFloat(1, newInterest);
+				preparedUpdateStatement.setString(2, accountId);
+
+				preparedUpdateStatement.executeUpdate();
+
+				addTransaction("Bob", "add interest", 0.0, accountId, null, null);
+			}
+			else
+			{
+				System.out.println("Unable to add interest because account specified is closed");
+			}
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+		}
+	}
+
+	public void accrueInterest(String accountId) {
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String sql = "select account.balance from account where account.aid = ? and account.status = 0";
+			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
+			preparedStatement.setString(1, accountId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			if (resultSet.next())
+			{
+//				String checkDate = "select SETTIME from SETTINGTIMES ORDER BY id DESC FETCH FIRST 1 ROWS ONLY";
+//				System.out.println("In here actually");
+//				PreparedStatement preparedStatement2 = _connection.prepareStatement(checkDate);
+//				ResultSet resultSet2 = preparedStatement2.executeQuery();
+
+
+				ResultSet resultSet2 = statement.executeQuery( "select SETTIME from SETTINGTIMES ORDER BY id DESC FETCH FIRST 1 ROWS ONLY" );
+
+					while( resultSet2.next() ) {
+
+						java.sql.Date dbSqlDate = resultSet2.getDate("SETTIME");
+						java.util.Date dbSqlDateConverted = new java.util.Date(dbSqlDate.getTime());
+						System.out.println(dbSqlDateConverted); // check the current system date
+					}
+					// then if yes we accruate the interest
+
+
+
+//				String addInterest = "update account set account.interest = ? where account.aid = ?";
+//				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(addInterest);
+//				preparedUpdateStatement.setFloat(1, newInterest);
+//				preparedUpdateStatement.setString(2, accountId);
+//
+//				preparedUpdateStatement.executeUpdate();
+			}
+			else
+			{
+				System.out.println("Unable to accrue interest because account specified is closed");
+			}
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+		}
+	}
+
 
 	public void bankTeller()
 	{
@@ -1892,10 +2013,9 @@ public class App implements Testable
 			System.out.println("7. Create Account");
 			System.out.println("8. Delete Closed Accounts and Customers");
 			System.out.println("9. Delete Transactions");
-			System.out.println("10. Set Date");
-			System.out.println("11. Exit");
+			System.out.println("10. Exit");
 
-			System.out.print("Enter choice(1-11): ");
+			System.out.print("Enter choice(1-10): ");
 
 			choice = sc.nextInt();
 
@@ -1928,7 +2048,10 @@ public class App implements Testable
 				case 6:
 					System.out.print("Enter account id: ");
 					accId = sc.next();
-					System.out.println("Add interest"); // to do
+					System.out.print("Enter interest: ");
+					float interest = sc.nextFloat();
+					addInterest(accId,interest);
+					//System.out.println("Add interest"); // to do
 					break;
 				case 7:
 					System.out.println("Select what type of account you would like to create: ");
@@ -1989,15 +2112,6 @@ public class App implements Testable
 					deleteTransactions();
 					break;
 				case 10:
-					System.out.println("What year? ");
-					int y = sc.nextInt();
-					System.out.println("What month? ");
-					int m = sc.nextInt();
-					System.out.println("What day? ");
-					int da = sc.nextInt();
-					setDate(y, m, da);
-					break;
-				case 11:
 					selected = "Exiting BankTeller!";
 					break;
 				default:
@@ -2031,7 +2145,8 @@ public class App implements Testable
 				System.out.println("6: Collect");
 				System.out.println("7: Pay-Friend");
 				System.out.println("8: Wire");
-				System.out.println("9: Exit ATM");
+				System.out.println("9: Accrue-Interest");
+				System.out.println("10: Exit ATM");
 
 				choice = sc.nextInt();
 				switch(choice) {
@@ -2105,6 +2220,12 @@ public class App implements Testable
 						wire(tid, from, to, a);
 						break;
 
+					case 9:
+						System.out.print("From which account would you like to accrue interest? "); // words
+						accId = sc.next();
+						accrueInterest(accId);
+						break;
+
 					default:
 						System.out.println("Please choose an option");
 						break;
@@ -2139,7 +2260,13 @@ public class App implements Testable
 				bankTeller();
 				break;
 			case 2:
-				System.out.println("Set date");
+				System.out.println("What year? ");
+				int y = sc.nextInt();
+				System.out.println("What month? ");
+				int m = sc.nextInt();
+				System.out.println("What day? ");
+				int da = sc.nextInt();
+				setDate(y, m, da);
 				break;
 			case 3:
 				System.out.println("Exiting");

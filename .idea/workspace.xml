@@ -4,10 +4,9 @@
     <list default="true" id="35d9870f-45be-424d-8052-22fe56e9679e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cs174a/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/cs174a/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cs174a/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/cs174a/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cs174a/Testable.java" beforeDir="false" afterPath="$PROJECT_DIR$/cs174a/Testable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/cs174a/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/cs174a/App.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/cs174a/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/cs174a/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/cs174a/Testable.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/cs174a/Testable.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,8 +23,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="333">
-              <caret line="50" column="37" lean-forward="true" selection-start-line="50" selection-start-column="37" selection-end-line="50" selection-end-column="37" />
+            <state relative-caret-position="734">
+              <caret line="58" column="32" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="32" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -36,8 +35,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="112" column="42" selection-start-line="112" selection-start-column="4" selection-end-line="112" selection-end-column="42" />
+            <state relative-caret-position="323">
+              <caret line="49" column="18" selection-start-line="49" selection-start-column="11" selection-end-line="49" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -45,20 +44,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cs174a/App.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
-              <caret line="392" column="28" selection-start-line="392" selection-start-column="28" selection-end-line="392" selection-end-column="28" />
+            <state relative-caret-position="515">
+              <caret line="1974" lean-forward="true" selection-start-line="1974" selection-end-line="1974" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/README">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" column="38" lean-forward="true" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -75,10 +65,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>pa</find>
-      <find>next</find>
-      <find>example</find>
-      <find>list</find>
+      <find>topup</find>
+      <find>transfer</find>
+      <find>set</find>
+      <find>collect</find>
+      <find>owner</find>
+      <find>addprimary</find>
+      <find>addcOOWNER</find>
+      <find>GENERATE</find>
+      <find>customer report</find>
+      <find>getCustomerReport</find>
+      <find>customerreport</find>
+      <find>add</find>
+      <find>setDate</find>
+      <find>setDATE</find>
+      <find>setdate</find>
+      <find>status</find>
+      <find>update</find>
+      <find>add interest</find>
+      <find>addInterest</find>
+      <find>accountId</find>
+      <find>sc.next()</find>
+      <find>deposit</find>
+      <find>addinterest</find>
+      <find>delete closed</find>
+      <find>deleteTransactions</find>
+      <find>transaction</find>
+      <find>addtransaction</find>
+      <find>accrue Interest</find>
+      <find>accrue</find>
+      <find>accrueInt</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -105,9 +121,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="-18" />
-    <option name="y" value="26" />
-    <option name="width" value="1094" />
+    <option name="x" value="61" />
+    <option name="y" value="23" />
+    <option name="width" value="1280" />
     <option name="height" value="777" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -116,6 +132,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -126,7 +144,7 @@
             <path>
               <item name="BankApp" type="b2602c69:ProjectViewProjectNode" />
               <item name="BankApp" type="462c0819:PsiDirectoryNode" />
-              <item name=".idea" type="462c0819:PsiDirectoryNode" />
+              <item name="cs174a" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="BankApp" type="b2602c69:ProjectViewProjectNode" />
@@ -136,8 +154,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -199,18 +215,18 @@
       <workItem from="1572029893876" duration="1456000" />
       <workItem from="1572361929794" duration="3205000" />
       <workItem from="1573240016220" duration="1799000" />
-      <workItem from="1574584258041" duration="33047000" />
+      <workItem from="1574584258041" duration="33328000" />
+      <workItem from="1575231301853" duration="23429000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="52059000" />
+    <option name="totallyTimeSpent" value="75769000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1365105" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23828755" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -227,7 +243,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32876712" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.30273974" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.3068493" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32868218" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -250,15 +266,7 @@
     </ignored-roots>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/out/production/BankApp/main.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#247#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/out/production/BankApp/main.class" />
     <entry file="file://$PROJECT_DIR$/cs174a/InterestCheckingAccount.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
@@ -302,13 +310,6 @@
     <entry file="file://$PROJECT_DIR$/BankApp.iml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/cs174a/Customer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/DataSourceSample.java">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -334,21 +335,28 @@
     <entry file="file://$PROJECT_DIR$/README">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
-          <caret line="12" column="38" lean-forward="true" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
+          <caret line="12" column="38" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cs174a/Customer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="112" column="42" selection-start-line="112" selection-start-column="4" selection-end-line="112" selection-end-column="42" />
+        <state relative-caret-position="323">
+          <caret line="49" column="18" selection-start-line="49" selection-start-column="11" selection-end-line="49" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="333">
-          <caret line="50" column="37" lean-forward="true" selection-start-line="50" selection-start-column="37" selection-end-line="50" selection-end-column="37" />
+        <state relative-caret-position="734">
+          <caret line="58" column="32" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -357,8 +365,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/App.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="392" column="28" selection-start-line="392" selection-start-column="28" selection-end-line="392" selection-end-column="28" />
+        <state relative-caret-position="515">
+          <caret line="1974" lean-forward="true" selection-start-line="1974" selection-end-line="1974" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
