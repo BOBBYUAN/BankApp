@@ -14,6 +14,7 @@ import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -1675,20 +1676,136 @@ public class App implements Testable
 		return "0";
 	}
 
-//	public String generateMonthlyStatement
-//	{
-//		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
-//		{
-//
-//
-//		}
-//		catch(SQLException e)
-//		{
-//			System.err.println(e.getMessage());
-//			return "1";
-//		}
-//
-//	}
+
+	// goes and checks if the customer is a primary owner of some account in owners table
+	// if they are, generate reports for all the accounts on which they are listed as a primary or co-owner
+	// else, they don't have this privilege bc their only role in the bank system is as a co-owner (meaning they arent primary owners of any accounts)
+
+	public String generateMonthlyStatement(String customerId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String s = "select cid from owners where cid = ? and primary = 0";
+			PreparedStatement ps = _connection.prepareStatement(s);
+			ps.setString(1, customerId);
+			ResultSet resultSet = ps.executeQuery();
+
+			ArrayList<String> aids = new ArrayList<String>();
+
+			if(!resultSet.next())
+			{
+				System.out.println("Sorry you do not have this privilege. You must be a primary owner of some account to generate a monthly report.");
+				return "1";
+			}
+			else
+			{
+				s = "select aid from owners where cid = ?";
+				ps = _connection.prepareStatement(s);
+				ps.setString(1, customerId);
+				resultSet = ps.executeQuery();
+
+				while (resultSet.next())
+				{
+					aids.add(resultSet.getString(1));
+				}
+
+				for (String aid: aids)
+				{
+					printReport(aid);
+				}
+			}
+		return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+	public String printReport(String accountId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			System.out.println("-----------------------------");
+			System.out.println("Report for account: " + accountId);
+			String s = "select * from transaction where from_aid = ? or to_aid = ? order by tdate, ttype";
+			PreparedStatement ps = _connection.prepareStatement(s);
+			ps.setString(1, accountId);
+			ps.setString(2, accountId);
+			ResultSet resultSet = ps.executeQuery();
+
+			String d;
+			String name;
+			String type;
+			double amount;
+			String from = "";
+			String to = "";
+			int check_numer;
+
+			if(!resultSet.next())
+			{
+				System.out.println("No transactions for this account.");
+				return "1";
+			}
+			else
+			{
+				while(resultSet.next())
+				{
+					d = resultSet.getString(2);
+					name = resultSet.getString(3);
+					type = resultSet.getString(4);
+					amount = resultSet.getDouble(5);
+					from = resultSet.getString(6);
+					to = resultSet.getString(7);
+					check_numer = resultSet.getInt(8);
+
+					switch (type)
+					{
+						case "deposit":
+							System.out.println(d + " " + name + " deposits " + amount + " to account " + from);
+							break;
+						case "tops up":
+							System.out.println(d + " " + name + " top-ups " + amount + " to account " + to + " from account " + from);
+							break;
+						case "withdrawal":
+							System.out.println(d + " " + name + " withdraws " + amount + " from account " + from);
+							break;
+						case "purchases":
+							System.out.println(d + " " + name + " purchases " + amount + " from account " + from);
+							break;
+						case "writes a check":
+							System.out.println(d + " " + name + " writes a check in amount of " + amount + " from account " + from);
+							break;
+						case "collects":
+							System.out.println(d + " " + name + " collects " + amount + " from account " + from + " to account " + to);
+							break;
+						case "trasnfers":
+							System.out.println(d + " " + name + " transfers " + amount + " from account " + from + " to account " + to);
+							break;
+						case "pays friend":
+							System.out.println(d + " " + name + " pay-friends " + amount + " from account " + from + " to account " + to);
+							break;
+						case "wires":
+							System.out.println(d + " " + name + " wires " + amount + " from account " + from + " to account " + to);
+							break;
+						default:
+							System.out.println("UNKNOWN TRANSACTION TYPE!!");
+							break;
+					}
+				}
+			}
+			System.out.println("-----------------------------");
+			return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
+
 
 	public void bankTeller()
 	{
@@ -1726,7 +1843,7 @@ public class App implements Testable
 				case 2:
 					System.out.print("Enter account id: ");
 					accId = sc.next();
-					System.out.println("Generate Monthly Statement");   // to do
+					generateMonthlyStatement(accId);  // to do
 					break;
 				case 3:
 					listClosedAccounts();
