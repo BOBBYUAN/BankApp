@@ -1727,13 +1727,29 @@ public class App implements Testable
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			System.out.println("-----------------------------");
-			System.out.println("Report for account: " + accountId);
-			String s = "select * from transaction where from_aid = ? or to_aid = ? order by tdate, ttype";
+			String s = "select balance from account where aid = ?";
 			PreparedStatement ps = _connection.prepareStatement(s);
 			ps.setString(1, accountId);
-			ps.setString(2, accountId);
 			ResultSet resultSet = ps.executeQuery();
+			double currentBalance;
+
+			if(resultSet.next())
+			{
+				currentBalance = resultSet.getDouble(1);
+			}
+			else
+			{
+				System.out.println("There is no such account");
+				return "1";
+			}
+
+			System.out.println("-----------------------------");
+			System.out.println("Report for account: " + accountId);
+			s = "select * from transaction where from_aid = ? or to_aid = ? order by tdate, ttype";
+			ps = _connection.prepareStatement(s);
+			ps.setString(1, accountId);
+			ps.setString(2, accountId);
+			resultSet = ps.executeQuery();
 
 			String d;
 			String name;
@@ -1743,6 +1759,8 @@ public class App implements Testable
 			String to = "";
 			int check_numer;
 
+			double monthAmount = 0;
+
 			if(!resultSet.next())
 			{
 				System.out.println("No transactions for this account.");
@@ -1750,6 +1768,7 @@ public class App implements Testable
 			}
 			else
 			{
+
 				while(resultSet.next())
 				{
 					d = resultSet.getString(2);
@@ -1764,29 +1783,53 @@ public class App implements Testable
 					{
 						case "deposit":
 							System.out.println(d + " " + name + " deposits " + amount + " to account " + from);
+							monthAmount += amount;
 							break;
 						case "tops up":
+							if(from.equals(accountId))
+								monthAmount -= amount;
+							else
+								monthAmount += amount;
 							System.out.println(d + " " + name + " top-ups " + amount + " to account " + to + " from account " + from);
 							break;
 						case "withdrawal":
 							System.out.println(d + " " + name + " withdraws " + amount + " from account " + from);
+							monthAmount -= amount;
 							break;
 						case "purchases":
 							System.out.println(d + " " + name + " purchases " + amount + " from account " + from);
+							monthAmount -= amount;
 							break;
 						case "writes a check":
 							System.out.println(d + " " + name + " writes a check in amount of " + amount + " from account " + from);
+							monthAmount -= amount;
 							break;
 						case "collects":
+							if(from.equals(accountId))
+								monthAmount -= amount;
+							else
+								monthAmount += amount;
 							System.out.println(d + " " + name + " collects " + amount + " from account " + from + " to account " + to);
 							break;
 						case "trasnfers":
+							if(from.equals(accountId))
+								monthAmount -= amount;
+							else
+								monthAmount += amount;
 							System.out.println(d + " " + name + " transfers " + amount + " from account " + from + " to account " + to);
 							break;
 						case "pays friend":
+							if(from.equals(accountId))
+								monthAmount -= amount;
+							else
+								monthAmount += amount;
 							System.out.println(d + " " + name + " pay-friends " + amount + " from account " + from + " to account " + to);
 							break;
 						case "wires":
+							if(from.equals(accountId))
+								monthAmount -= amount;
+							else
+								monthAmount += amount;
 							System.out.println(d + " " + name + " wires " + amount + " from account " + from + " to account " + to);
 							break;
 						default:
@@ -1795,6 +1838,9 @@ public class App implements Testable
 					}
 				}
 			}
+
+			System.out.println("Initial account balance: " + (currentBalance - monthAmount));
+			System.out.println("Final account balance: " + currentBalance);
 			System.out.println("-----------------------------");
 			return "0";
 		}
@@ -1804,7 +1850,6 @@ public class App implements Testable
 			return "1";
 		}
 	}
-
 
 
 	public void bankTeller()
@@ -1944,94 +1989,95 @@ public class App implements Testable
 		String pin = sc.next();
 		if (verifyPin(tid, pin))
 		{
-			System.out.println("YES");
-			System.out.println("Choose one of the following options:");
-			System.out.println("1: Deposit");
-			System.out.println("2: Top-Up");
-			System.out.println("3: Withdrawal");
-			System.out.println("4: Purchase");
-			System.out.println("5: Transfer");
-			System.out.println("6: Collect");
-			System.out.println("7: Pay-Friend");
-			System.out.println("8: Wire");
-			System.out.println("9: Exit ATM");
+			while (choice != 10) {
+				System.out.println("YES");
+				System.out.println("Choose one of the following options:");
+				System.out.println("1: Deposit");
+				System.out.println("2: Top-Up");
+				System.out.println("3: Withdrawal");
+				System.out.println("4: Purchase");
+				System.out.println("5: Transfer");
+				System.out.println("6: Collect");
+				System.out.println("7: Pay-Friend");
+				System.out.println("8: Wire");
+				System.out.println("9: Exit ATM");
 
-			choice = sc.nextInt();
-			switch(choice)
-			{
-				case 1:
-					System.out.println("To which account would you like to deposit? "); //fix why it doesnt show wrong errors
-					String accId = sc.next();
-					System.out.print("How much would you like to deposit? ");
-					double a = sc.nextDouble();
-					deposit(accId, a);
-					break;
+				choice = sc.nextInt();
+				switch(choice) {
+					case 1:
+						System.out.println("To which account would you like to deposit? "); //fix why it doesnt show wrong errors
+						String accId = sc.next();
+						System.out.print("How much would you like to deposit? ");
+						double a = sc.nextDouble();
+						deposit(accId, a);
+						break;
 
-				case 2:
-					System.out.println("Which pocket account id would you like to top up? "); // works
-					accId = sc.next();
-					System.out.print("How much would you like to top-up? ");
-					a = sc.nextDouble();
-					topUp(accId, a);
-					break;
+					case 2:
+						System.out.println("Which pocket account id would you like to top up? "); // works
+						accId = sc.next();
+						System.out.print("How much would you like to top-up? ");
+						a = sc.nextDouble();
+						topUp(accId, a);
+						break;
 
-				case 3:
-					System.out.print("From which account would you like to withdraw? "); // works
-					accId = sc.next();
-					System.out.print("How much would you like to withdraw? ");
-					a = sc.nextDouble();
-					withdrawal(accId, a);
-					break;
+					case 3:
+						System.out.print("From which account would you like to withdraw? "); // works
+						accId = sc.next();
+						System.out.print("How much would you like to withdraw? ");
+						a = sc.nextDouble();
+						withdrawal(accId, a);
+						break;
 
-				case 4:
-					System.out.print("From which pokcet account id would you like to purchase? "); // works
-					accId = sc.next();
-					System.out.print("How much would you like to purchase? ");
-					a = sc.nextDouble();
-					purchase(accId, a);
-					break;
+					case 4:
+						System.out.print("From which pokcet account id would you like to purchase? "); // works
+						accId = sc.next();
+						System.out.print("How much would you like to purchase? ");
+						a = sc.nextDouble();
+						purchase(accId, a);
+						break;
 
-				case 5:
-					System.out.print("From which checkings/savings account would you like to transfer? ");
-					String from = sc.next();
-					System.out.print("To which checkings/savings account would you like to transfer? ");
-					String to = sc.next();
-					System.out.print("How much would you like to transfer? ");
-					a = sc.nextDouble();
-					transfer(tid, from, to, a);
-					break;
+					case 5:
+						System.out.print("From which checkings/savings account would you like to transfer? ");
+						String from = sc.next();
+						System.out.print("To which checkings/savings account would you like to transfer? ");
+						String to = sc.next();
+						System.out.print("How much would you like to transfer? ");
+						a = sc.nextDouble();
+						transfer(tid, from, to, a);
+						break;
 
-				case 6:
-					System.out.print("From which pocket account would you like to collect money from? "); // words
-					accId = sc.next();
-					System.out.print("How much would you like to collect? ");
-					a = sc.nextDouble();
-					collect(accId, a);
-					break;
+					case 6:
+						System.out.print("From which pocket account would you like to collect money from? "); // words
+						accId = sc.next();
+						System.out.print("How much would you like to collect? ");
+						a = sc.nextDouble();
+						collect(accId, a);
+						break;
 
-				case 7:
-					System.out.print("From which pocket account would you like to pay from? "); // works
-					from = sc.next();
-					System.out.print("To which pocket account would you like to pay? ");
-					to = sc.next();
-					System.out.print("How much would you like to pay? ");
-					a = sc.nextDouble();
-					payFriend(from, to, a);
-					break;
+					case 7:
+						System.out.print("From which pocket account would you like to pay from? "); // works
+						from = sc.next();
+						System.out.print("To which pocket account would you like to pay? ");
+						to = sc.next();
+						System.out.print("How much would you like to pay? ");
+						a = sc.nextDouble();
+						payFriend(from, to, a);
+						break;
 
-				case 8:
-					System.out.print("From which checking/savings account would you like to wire from? "); // works
-					from = sc.next();
-					System.out.print("To which checking/savings would you like to wire to? ");
-					to = sc.next();
-					System.out.print("How much would you like to wire? ");
-					a = sc.nextDouble();
-					wire(tid, from, to, a);
-					break;
+					case 8:
+						System.out.print("From which checking/savings account would you like to wire from? "); // works
+						from = sc.next();
+						System.out.print("To which checking/savings would you like to wire to? ");
+						to = sc.next();
+						System.out.print("How much would you like to wire? ");
+						a = sc.nextDouble();
+						wire(tid, from, to, a);
+						break;
 
-				default:
-					System.out.println("Please choose an option");
-					break;
+					default:
+						System.out.println("Please choose an option");
+						break;
+				}
 			}
 
 		}
