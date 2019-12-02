@@ -104,6 +104,9 @@ public class Main
 //			r = app.getCustomerReport("2");
 //			System.out.println(r);
 
+//			java.sql.Date dt = app.getDate();
+//			System.out.println(dt);
+
 
 
 		}
