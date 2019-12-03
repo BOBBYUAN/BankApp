@@ -2497,6 +2497,59 @@ public class App implements Testable
 
 	}
 
+	public String generateDTER(String customerId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
+			String s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.from_aid and o.cid = ? and o.primary = 0 and ttype='deposit'";
+			PreparedStatement ps = _connection.prepareStatement(s);
+			ps.setString(1, customerId);
+			ResultSet resultSet = ps.executeQuery();
+
+			double totalDeposit;
+
+			if (resultSet.next())
+			{
+				totalDeposit = (resultSet.getDouble("total_amount"));
+				System.out.println("TOTAL DEPOSIT");
+				System.out.println(Double.toString(totalDeposit));
+			}
+
+			s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.to_aid and o.cid = ? and o.primary = 0 and ttype='trasnfers'";
+			ps = _connection.prepareStatement(s);
+			ps.setString(1, customerId);
+			resultSet = ps.executeQuery();
+
+			double totalTransfers;
+
+			if (resultSet.next())
+			{
+				totalTransfers = (resultSet.getDouble("total_amount"));
+				System.out.println("TOTAL Transfers");
+				System.out.println(Double.toString(totalTransfers));
+			}
+
+			s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.to_aid and o.cid = ? and o.primary = 0 and ttype='wires'";
+			ps = _connection.prepareStatement(s);
+			ps.setString(1, customerId);
+			resultSet = ps.executeQuery();
+
+			double totalWires;
+
+			if (resultSet.next())
+			{
+				totalWires = (resultSet.getDouble("total_amount"));
+				System.out.println("TOTAL Wires");
+				System.out.println(Double.toString(totalWires));
+			}
+
+			return "0";
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
 
 	public void bankTeller()
 	{
@@ -2540,9 +2593,9 @@ public class App implements Testable
 					listClosedAccounts();
 					break;
 				case 4:
-					System.out.print("Enter account id: ");
-					accId = sc.next();
-					System.out.println("Generate Government Drug and Tax Evasion Report (DTER)"); // to do
+					System.out.print("Enter tax id: ");
+					customerTaxID = sc.next();
+					generateDTER(customerTaxID);
 					break;
 				case 5:
 					System.out.print("Enter tax identification number: ");
