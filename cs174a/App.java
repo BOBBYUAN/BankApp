@@ -70,8 +70,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##grousseva";
-		final String DB_PASSWORD = "8611311";
+		final String DB_USER = "c##wangcheng";
+		final String DB_PASSWORD = "7429699";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();
@@ -360,25 +360,26 @@ public class App implements Testable
 					"primary key(cid, aid, primary), " +
 					"foreign key(cid) references Customer(cid) on delete cascade," +
 					"foreign key(aid) references Account(aid) on delete cascade)";
-			String s5 = "create sequence tid start with 1 increment by 1";
-			String s6 = "create table Settings(current_date date)";
+			//String s5 = "create sequence tid start with 1 increment by 1";
+			//String s6 = "create table Settings(current_date date)";
 
 			// not quite sure the syntax we create table like that
 			String s7 = "create table SETTINGTIMES ( id int, settime date, primary key(id))";
-			String s8 = "create sequence  SETTINGTIMES_seq";
-			String s9 = "create or replace trigger SETTINGTIMES_trg";
-			String s10 = "before insert on SETTINGTIMES for each row begin select SETTINGTIMES_seq.nextval into :new.id from dual; end";
 
-//			statement.addBatch(s1);
-//			statement.addBatch(s2);
-//			statement.addBatch(s3);
-//			statement.addBatch(s4);
-//			statement.addBatch(s5);
-//			statement.addBatch(s7);
+//			String s8 = "create sequence  SETTINGTIMES_seq";
+//			String s9 = "create or replace trigger SETTINGTIMES_trg";
+//			String s10 = "before insert on SETTINGTIMES for each row begin select SETTINGTIMES_seq.nextval into :new.id from dual; end";
+
+			statement.addBatch(s1);
+			statement.addBatch(s2);
+			statement.addBatch(s3);
+			statement.addBatch(s4);
+			//statement.addBatch(s5);
+			statement.addBatch(s7);
 //			statement.addBatch(s8);
 //			statement.addBatch(s9);
 //			statement.addBatch(s10);
-//			statement.executeBatch();
+			statement.executeBatch();
 
 			//ResultSet resultSet = statement.executeQuery("create table Customer(cid integer,cname varchar(20),address varchar(20),pin varchar(20),primary key(cid))" );
 			//resultSet = statement.executeQuery("create table Account(aid integer,cid integer,branch_name varchar(20),balance decimal(13,2),interest float,primary key(aid),foreign key(cid) references Customer(cid))" );
@@ -418,7 +419,8 @@ public class App implements Testable
 //			resultSet = statement.executeQuery("drop table SavingAccount");
 //			resultSet = statement.executeQuery("drop table StudentCheckingAccount");
 //			resultSet = statement.executeQuery("drop table InterestCheckingAccount");
-			ResultSet resultSet = statement.executeQuery("drop table Owners");
+			ResultSet resultSet = statement.executeQuery("drop table SETTINGTIMES");
+			resultSet = statement.executeQuery("drop table Owners");
 			resultSet = statement.executeQuery("drop table Account");
 			resultSet = statement.executeQuery("drop table Customer");
 			resultSet = statement.executeQuery("drop table Transaction");

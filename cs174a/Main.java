@@ -28,8 +28,8 @@ public class Main
 		if( r.equals( "0" ) )
 		{
 			//app.exampleAccessToDB();                // Example on how to connect to the DB.
-//			r = app.createTables();
-//			System.out.println( r );
+			r = app.createTables();
+			System.out.println( r );
 
 //			r = app.dropTables();
 //			System.out.println( r );
