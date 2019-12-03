@@ -226,7 +226,6 @@ public class App implements Testable
 			System.err.println( e.getMessage() );
 		}
 
-
 		return result;
 		//return "0 " + id + " " + accountType + " " + initialBalance + " " + tin;
 	}
@@ -546,7 +545,7 @@ public class App implements Testable
 			preparedStatement.executeUpdate();
 			System.out.println("SUCESS");
 
-			return "0";
+			return("0 " + accountID + "POCKET " + initialTopUp + " " + tin);
 		}
 		catch( SQLException e )
 		{
@@ -614,7 +613,16 @@ public class App implements Testable
 //			System.err.println( e.getMessage() );
 //			return "1";
 		}
-		return r + date_str;
+		if (month < 10)
+		{
+			date_str = Integer.toString(year) + "-0" + Integer.toString(month) + '-' + Integer.toString(day);
+			return r + date_str;
+
+		}
+		else
+		{
+			return r + date_str;
+		}
 	}
 
 	public static Date parseDate(String date) {
@@ -682,7 +690,7 @@ public class App implements Testable
 				System.out.println("Unable to create customer because account specified is closed");
 				return "1";
 			}
-			return "0 " + accountId + " " + name;
+			return "0";
 		}
 		catch( SQLException e)
 		{
@@ -702,6 +710,9 @@ public class App implements Testable
 				System.out.println("Amount must be positive");
 				return "1";
 			}
+
+			double parentNewBal = 0.0;
+			double pocketNewBal = 0.0;
 
 			String sql = "select pocket_linked_to, balance, status from account where aid = ? and type = 'POCKET'";
 			PreparedStatement p = _connection.prepareStatement(sql);
@@ -728,7 +739,7 @@ public class App implements Testable
 				while (resultSet.next())
 				{
 					double parentBal = Double.parseDouble(resultSet.getString(1));
-					double parentNewBal = parentBal - amount;
+					parentNewBal = parentBal - amount;
 
 					if (parentNewBal <= 0.01)
 					{
@@ -737,7 +748,7 @@ public class App implements Testable
 					}
 					else
 					{
-						double pocketNewBal = pocketBal + amount;
+						pocketNewBal = pocketBal + amount;
 
 						String updatePocketBalance = "update account set balance = ? where aid = ?";
 						PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updatePocketBalance);
@@ -765,9 +776,8 @@ public class App implements Testable
 				System.out.println("Invalid pocket account id");
 				return "1";
 			}
-			return "0";
+			return("0 " + parentNewBal + " " + pocketNewBal);
 		}
-
 
 		catch(SQLException e)
 		{
@@ -861,7 +871,7 @@ public class App implements Testable
 				return "1";
 			}
 
-			return "0";
+			return ("0 " + fromBalance + " " + toBalance);
 		}
 		catch(SQLException e)
 		{
@@ -1212,9 +1222,9 @@ public class App implements Testable
 				System.out.println("Invalid customerId or invalid source account id or invalid desination id");
 				return "1";
 			}
-			if (Integer.parseInt(resultSet.getString(2)) == 0)
+			if (Integer.parseInt(resultSet.getString(2)) == 1)
 			{
-				System.out.println("Customer must be a co owner on destination account to do transfer");
+				System.out.println("Customer must be a primary on destination account to do transfer");
 				return "1";
 			}
 
@@ -2505,7 +2515,7 @@ public class App implements Testable
 			ps.setString(1, customerId);
 			ResultSet resultSet = ps.executeQuery();
 
-			double totalDeposit;
+			double totalDeposit = 0.0;
 
 			if (resultSet.next())
 			{
@@ -2519,7 +2529,7 @@ public class App implements Testable
 			ps.setString(1, customerId);
 			resultSet = ps.executeQuery();
 
-			double totalTransfers;
+			double totalTransfers = 0.0;
 
 			if (resultSet.next())
 			{
@@ -2533,7 +2543,7 @@ public class App implements Testable
 			ps.setString(1, customerId);
 			resultSet = ps.executeQuery();
 
-			double totalWires;
+			double totalWires = 0.0;
 
 			if (resultSet.next())
 			{
@@ -2542,6 +2552,10 @@ public class App implements Testable
 				System.out.println(Double.toString(totalWires));
 			}
 
+			if((totalDeposit + totalTransfers + totalWires) > 10000)
+			{
+				System.out.println(customerId);
+			}
 			return "0";
 		}
 		catch(SQLException e)

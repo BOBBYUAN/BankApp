@@ -35,37 +35,38 @@ public class Main
 //			System.out.println( r );
 
 			// Example tests.  We'll overwrite your Main.main() function with our final tests.
-//			r = app.listClosedAccounts();
+//			r = app.listClosedAccounts();            // done
 //			System.out.println( r );
 
 //			 Another example test.
-//			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "7", 1234.56, "12", "adfasdf", "Known" );
+//			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "7", 1234.56, "222", "adfasdf", "Known" );               ///done
 //			System.out.println( r );
-//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "1221", 1234.56, "54", "adfasdf", "Known" );
+//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "1221", 1234.56, "222", "adfasdf", "Known" );  /// done
 //			System.out.println( r );
-//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "78", 1234.56, "90", "adfasdf", "Known" );
+//			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "78", 1234.56, "222", "adfasdf", "Known" );      // done
 //			System.out.println( r );
 //
-//			r = app.deposit("1", 100.00);
+//			r = app.deposit("222", 100.00); /// done
 //			System.out.println(r);
 
-//			r = app.showBalance("3");
+//			r = app.showBalance("222");   /// done
 //			System.out.println(r);
 
-//			r = app.createPocketAccount("3", "1", 0, "1");
+//			r = app.createPocketAccount("3", "13345", 80.00, "0221");  /// done
 //			System.out.println(r);
 
 			// sets date to be nov 10 2010
 //			r = app.setDate(2010, 10, 10);
 //			System.out.println(r);
 
-//			r = app.createCustomer("1", "10", "bori", "sb");
+//			r = app.createCustomer("55555", "333", "new", "new");   /// done
 //			System.out.println(r);
 
-//			r = app.topUp("2", 10);
+
+//			r = app.topUp("3", 10);  /// done
 //			System.out.println(r);
 
-//			r = app.payFriend("2", "3", 50);
+//			r = app.payFriend("3", "777", 10);
 //			System.out.println(r);
 
 //			r = app.withdrawal("1", 3);
@@ -106,6 +107,9 @@ public class Main
 
 //			java.sql.Date dt = app.getDate();
 //			System.out.println(dt);
+
+//			r = app.setDate(2019, 6, 13);     // done and tested correct output
+//			System.out.println(r);
 
 
 
