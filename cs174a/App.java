@@ -70,8 +70,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##wangcheng";
-		final String DB_PASSWORD = "7429699";
+		final String DB_USER = "c##grousseva";
+		final String DB_PASSWORD = "8611311";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();
@@ -587,7 +587,6 @@ public class App implements Testable
 
 
 
-			System.out.println("Date inserted: " + date_str);
 //			Date dt;
 //			String s = Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day);
 //			System.out.println(s);
@@ -635,6 +634,15 @@ public class App implements Testable
 		}
 	}
 
+
+	public boolean checkEndOfMonth(java.sql.Date date)
+	{
+		Calendar c = Calendar.getInstance();
+		c.setTime(this.getDate());
+		int r = c.getActualMaximum(Calendar.DATE);
+		return r == c.get(Calendar.DAY_OF_MONTH);
+	}
+
 	public java.sql.Date getDate()
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
@@ -649,7 +657,6 @@ public class App implements Testable
 				java.sql.Date dbSqlDate = resultSet.getDate("SETTIME");
 //				java.util.Date dbSqlDateConverted = new java.util.Date(dbSqlDate.getTime());
 //				System.out.println(dbSqlDateConverted);
-				System.out.println(dbSqlDate);
 				return dbSqlDate;
 			}
 			else
@@ -1785,9 +1792,6 @@ public class App implements Testable
 			{
 				dbPin = rs.getString(1);
 				checkEncryption = encryptPin(pin);
-				System.out.println(dbPin.equals(checkEncryption));
-				System.out.println(dbPin);
-				System.out.println(checkEncryption);
 				return(dbPin.equals(checkEncryption));
 			}
 			else
@@ -1881,11 +1885,18 @@ public class App implements Testable
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			// check if its end of the month?
-			String sql = "truncate table transaction";
-			PreparedStatement p = _connection.prepareStatement(sql);
-			p.executeUpdate();
-			return "0";
+			if (checkEndOfMonth(this.getDate()) == false)
+			{
+				System.out.println("Sorry it is not the end of the month");
+				return "1";
+			}
+			else
+			{
+				String sql = "truncate table transaction";
+				PreparedStatement p = _connection.prepareStatement(sql);
+				p.executeUpdate();
+				return "0";
+			}
 		}
 		catch(SQLException e)
 		{
@@ -1993,41 +2004,43 @@ public class App implements Testable
 
 	public String generateMonthlyStatement(String customerId)
 	{
-		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
-		{
-			String s = "select cid from owners where cid = ? and primary = 0";
-			PreparedStatement ps = _connection.prepareStatement(s);
-			ps.setString(1, customerId);
-			ResultSet resultSet = ps.executeQuery();
-
-			ArrayList<String> aids = new ArrayList<String>();
-
-			if(!resultSet.next())
-			{
-				System.out.println("Sorry you do not have this privilege. You must be a primary owner of some account to generate a monthly report.");
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
+			if (checkEndOfMonth(this.getDate()) == false) {
+				System.out.println("Sorry it is not the end of the month");
 				return "1";
 			}
 			else
 			{
-				s = "select aid from owners where cid = ?";
-				ps = _connection.prepareStatement(s);
+				String s = "select cid from owners where cid = ? and primary = 0";
+				PreparedStatement ps = _connection.prepareStatement(s);
 				ps.setString(1, customerId);
-				resultSet = ps.executeQuery();
+				ResultSet resultSet = ps.executeQuery();
 
-				while (resultSet.next())
-				{
-					aids.add(resultSet.getString(1));
-				}
+				ArrayList<String> aids = new ArrayList<String>();
 
-				for (String aid: aids)
-				{
-					printReport(aid);
+				if (!resultSet.next()) {
+					System.out.println("Sorry you do not have this privilege. You must be a primary owner of some account to generate a monthly report.");
+					return "1";
+				} else {
+					s = "select aid from owners where cid = ?";
+					ps = _connection.prepareStatement(s);
+					ps.setString(1, customerId);
+					resultSet = ps.executeQuery();
+
+					while (resultSet.next()) {
+						aids.add(resultSet.getString(1));
+					}
+
+					for (String aid : aids) {
+						printOwnersAndAdresses(aid);
+						printReport(aid);
+					}
 				}
+				insuranceMonthlyReport(customerId);
+				System.out.println("-----------------------------");
+
+				return "0";
 			}
-			insuranceMonthlyReport(customerId);
-			System.out.println("-----------------------------");
-
-		return "0";
 		}
 		catch(SQLException e)
 		{
@@ -2035,6 +2048,43 @@ public class App implements Testable
 			return "1";
 		}
 	}
+
+	public void printOwnersAndAdresses(String accountId)
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
+		{
+			String s = "select cid from owners where aid = ? ";
+			PreparedStatement ps = _connection.prepareStatement(s);
+			ps.setString(1, accountId);
+			ResultSet resultSet = ps.executeQuery();
+
+			ArrayList<String> cids = new ArrayList<>();
+			while(resultSet.next())
+			{
+				cids.add(resultSet.getString(1));
+			}
+
+			for(String cid : cids)
+			{
+				s = "select cname, address from customer where cid = ? ";
+				ps = _connection.prepareStatement(s);
+				ps.setString(1, cid);
+				resultSet = ps.executeQuery();
+
+				while(resultSet.next())
+				{
+					System.out.println("Customer: " + resultSet.getString(1) + "\t\t\t\t\t" + "Address: " + resultSet.getString(2));
+				}
+			}
+		}
+		catch(SQLException e)
+		{
+			System.err.println(e.getMessage());
+			return;
+		}
+
+	}
+
 
 	public String insuranceMonthlyReport(String cid)
 	{
@@ -2212,39 +2262,38 @@ public class App implements Testable
 		}
 	}
 
+	public void addInterest()
+	{
+		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
 
-
-
-	public void addInterest(String accountId, float interest) {
-		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
-		{
-
-			float oldInterest  = 0.0f;
-			float newInterest = 0.0f;
-
-			String sql = "select account.interest from account where account.aid = ? and account.status = 0";
-			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
-			preparedStatement.setString(1, accountId);
-			ResultSet resultSet = preparedStatement.executeQuery();
-
-			if (resultSet.next())
+			if (checkEndOfMonth(this.getDate()) == false)
 			{
-
-				oldInterest = resultSet.getFloat("interest");
-				newInterest = oldInterest + interest;
-
-				String addInterest = "update account set account.interest = ? where account.aid = ?";
-				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(addInterest);
-				preparedUpdateStatement.setFloat(1, newInterest);
-				preparedUpdateStatement.setString(2, accountId);
-
-				preparedUpdateStatement.executeUpdate();
-
-				addTransaction(this.getName(customerTaxID), "add interest", 0.0, accountId, null, null);
+				System.out.println("Sorry it is not the end of the month");
+				return;
 			}
 			else
 			{
-				System.out.println("Unable to add interest because account specified is closed");
+				ArrayList<String> openAids = new ArrayList<String>();
+
+				String sql = "select aid from account where status = 0";
+				PreparedStatement preparedStatement = _connection.prepareStatement(sql);
+				ResultSet resultSet = preparedStatement.executeQuery();
+
+				if (!resultSet.next()) {
+					System.out.println("No open accounts");
+				} else {
+					sql = "select aid from account where status = 0";
+					preparedStatement = _connection.prepareStatement(sql);
+					resultSet = preparedStatement.executeQuery();
+
+					while (resultSet.next()) {
+						openAids.add(resultSet.getString(1));
+					}
+
+					for (String aid : openAids) {
+						accrueInterest(aid);
+					}
+				}
 			}
 		}
 		catch(SQLException e)
@@ -2303,56 +2352,56 @@ public class App implements Testable
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			java.sql.Date today = this.getDate();
-
-			String sql = "select balance, interest from account where aid = ?";
-			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
-			preparedStatement.setString(1, accountId);
-			ResultSet resultSet = preparedStatement.executeQuery();
-
-			double a = 0.0;
-			float interest_rate = 0.00f;
-
-			if(resultSet.next())
+			if (checkEndOfMonth(this.getDate()) == false)
 			{
-				a = resultSet.getDouble(1);
-				interest_rate = resultSet.getFloat(2);
-
+				System.out.println("Sorry it is not the end of the month");
+				return;
 			}
 			else
 			{
-				System.out.println("error");
+				java.sql.Date today = this.getDate();
+
+				String sql = "select balance, interest from account where aid = ?";
+				PreparedStatement preparedStatement = _connection.prepareStatement(sql);
+				preparedStatement.setString(1, accountId);
+				ResultSet resultSet = preparedStatement.executeQuery();
+
+				double a = 0.0;
+				float interest_rate = 0.00f;
+
+				if (resultSet.next()) {
+					a = resultSet.getDouble(1);
+					interest_rate = resultSet.getFloat(2);
+
+				} else {
+					System.out.println("error");
+				}
+
+				ArrayList<Double> dailyBalances = new ArrayList<Double>(0);
+
+				String s = today.toString();
+				String[] splits = s.split("-");
+				int l = Integer.parseInt(splits[splits.length - 1]);
+
+
+				for (int i = 1; i <= l; i++) {
+					java.sql.Date day = new java.sql.Date(today.getYear(), today.getMonth(), i);
+					double bal = getBalance(day, accountId, a);
+
+					dailyBalances.add(bal);
+
+				}
+
+				Double total = new Double(0.0);
+				for (int i = 1; i < dailyBalances.size(); i++) {
+					total += dailyBalances.get(i);
+				}
+
+				total = total / dailyBalances.size();
+
+
+				this.addAccrueInterestTransaction(accountId, (interest_rate * total));
 			}
-
-			ArrayList<Double> dailyBalances = new ArrayList<Double>(0);
-
-			String s = today.toString();
-			String[] splits = s.split("-");
-			int l = Integer.parseInt(splits[splits.length - 1]);
-
-
-			for(int i = 1; i <= l; i++)
-			{
-				java.sql.Date day = new java.sql.Date(today.getYear(), today.getMonth(), i);
-				double bal = getBalance(day, accountId, a);
-
-				dailyBalances.add(bal);
-
-			}
-
-			Double total = new Double(0.0);
-			for(int i = 1; i < dailyBalances.size(); i++)
-			{
-				total += dailyBalances.get(i);
-			}
-
-			total = total / dailyBalances.size();
-			System.out.println("AVG DAILY");
-			System.out.println(total);
-
-
-			this.addAccrueInterestTransaction(accountId, (interest_rate * total));
-
 		}
 		catch(SQLException e)
 		{
@@ -2392,7 +2441,7 @@ public class App implements Testable
 			preparedUpdateStatement.setString(2, accountId);
 
 			preparedUpdateStatement.executeUpdate();
-			addTransaction(this.getName(customerTaxID), "accrues interest", amount, null, accountId, null);
+			addTransaction(this.getName(customerTaxID), "add interest", amount, null, accountId, null);
 
 			return "0 " + oldBalance + " " + newBalance;
 		}
@@ -2477,15 +2526,15 @@ public class App implements Testable
 						else
 							monthAmount += amount;
 						break;
+					case "accrues interest":
+						if(to.equals(accountId))
+							monthAmount += amount;
+						break;
 					default:
 						System.out.println("UNKNOWN TRANSACTION TYPE!!");
 						break;
 				}
 			}
-
-			System.out.println("Initial account balance: " + (accountBal - monthAmount));
-			System.out.println("Final account balance: " + accountBal);
-
 			return (accountBal - monthAmount);
 
 		}
@@ -2612,7 +2661,7 @@ public class App implements Testable
 		String selected = "";
 
 
-		while (choice != 11) {
+		while (choice != 10) {
 
 			Scanner sc = new Scanner(System.in);
 			System.out.println("Bank Teller");
@@ -2658,12 +2707,7 @@ public class App implements Testable
 					getCustomerReport(customerTaxID);
 					break;
 				case 6:
-					System.out.print("Enter account id: ");
-					accId = sc.next();
-					System.out.print("Enter interest: ");
-					float interest = sc.nextFloat();
-					addInterest(accId,interest);
-					//System.out.println("Add interest"); // to do
+					addInterest();
 					break;
 				case 7:
 					System.out.println("Select what type of account you would like to create: ");
@@ -2752,10 +2796,10 @@ public class App implements Testable
 					deleteTransactions();
 					break;
 				case 10:
-					selected = "Exiting BankTeller!";
+					System.out.println("Exiting BankTeller!");
 					break;
 				default:
-					selected = "You didn't choose a option";
+					System.out.println("Not a valid option.");
 					break;
 			}
 
@@ -2775,7 +2819,6 @@ public class App implements Testable
 		if (verifyPin(customerTaxID, pin))
 		{
 			while (choice != 10) {
-				System.out.println("YES");
 				System.out.println("Choose one of the following options:");
 				System.out.println("1: Deposit");
 				System.out.println("2: Top-Up");
@@ -2861,17 +2904,17 @@ public class App implements Testable
 						break;
 
 					case 9:
-						System.out.print("From which account would you like to accrue interest? "); // words
+						System.out.print("From which account would you like to accrue interest? "); // works
 						accId = sc.next();
 						accrueInterest(accId);
 						break;
-
+					case 10:
+						System.out.println("Exiting");
 					default:
 						System.out.println("Please choose an option");
 						break;
 				}
 			}
-
 		}
 		else
 		{

@@ -108,9 +108,10 @@ public class Main
 //			java.sql.Date dt = app.getDate();
 //			System.out.println(dt);
 
-//			r = app.setDate(2019, 6, 13);     // done and tested correct output
+			r = app.setDate(2019, 7, 31);     // done and tested correct output
 //			System.out.println(r);
 
+//			System.out.println(app.checkEndOfMonth(app.getDate()));
 
 
 		}
