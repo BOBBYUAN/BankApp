@@ -165,7 +165,7 @@ public class App implements Testable
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "INTEREST_CHECKING");
-				preparedStatement.setFloat(6, 0.15f);
+				preparedStatement.setFloat(6, 0.03f);
 				preparedStatement.setInt(7, 0);
 				preparedStatement.executeQuery();
 
@@ -188,7 +188,7 @@ public class App implements Testable
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "STUDENT_CHECKING");
-				preparedStatement.setFloat(6, 0.15f);
+				preparedStatement.setFloat(6, 0.00f);
 				preparedStatement.executeQuery();
 
 
@@ -210,7 +210,7 @@ public class App implements Testable
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "SAVINGS");
-				preparedStatement.setFloat(6, 0.15f);
+				preparedStatement.setFloat(6, 0.048f);
 				preparedStatement.executeQuery();
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
@@ -254,7 +254,7 @@ public class App implements Testable
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "INTEREST_CHECKING");
-				preparedStatement.setFloat(6, 0.15f);
+				preparedStatement.setFloat(6, 0.03f);
 				preparedStatement.setInt(7, 0);
 				preparedStatement.executeQuery();
 
@@ -277,7 +277,7 @@ public class App implements Testable
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "STUDENT_CHECKING");
-				preparedStatement.setFloat(6, 0.15f);
+				preparedStatement.setFloat(6, 0.00f);
 				preparedStatement.executeQuery();
 
 
@@ -299,7 +299,7 @@ public class App implements Testable
 				preparedStatement.setString(3, "CHASE");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "SAVINGS");
-				preparedStatement.setFloat(6, 0.15f);
+				preparedStatement.setFloat(6, 0.048f);
 				preparedStatement.executeQuery();
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
@@ -745,8 +745,8 @@ public class App implements Testable
 
 					if (parentNewBal <= 0.01)
 					{
-						System.out.println("Not enough funds");
-						return "1";
+						//System.out.println("Not enough funds");
+						//return "1";
 					}
 					else
 					{
@@ -793,10 +793,11 @@ public class App implements Testable
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
+			String result;
 			if (amount < 0)
 			{
-				System.out.println("Amount must be positive");
-				return "1";
+				//System.out.println("Amount must be positive");
+				result = "1";
 			}
 
 //			if(checkOwnership(this.cid, from) == false)
@@ -818,19 +819,22 @@ public class App implements Testable
 				int status = Integer.parseInt(resultSet1.getString(2));
 				if (status == 1)
 				{
-					System.out.println("Source account is closed");
-					return "1";
+				//	System.out.println("Source account is closed");
+					result = "1";
+					//return "1";
 				}
-				if (fromBalance - amount <= 0.01)
+				if (fromBalance - amount < 0.00)
 				{
-					System.out.println("Not enough funds");
-					return "1";
+				//	System.out.println("Not enough funds");
+					result = "1";
+					//return "1";
 				}
 			}
 			else
 			{
-				System.out.println("Invalid source pocket account id");
-				return "1";
+				//System.out.println("Invalid source pocket account id");
+				result = "1";
+				//return "1";
 			}
 
 
@@ -845,35 +849,70 @@ public class App implements Testable
 				if (status == 1)
 				{
 					System.out.println("Destination account is closed");
-					return "1";
+					result = "1";
+					//return "1";
 				}
 				toBalance = Double.parseDouble(resultSet2.getString(1));
 				toBalance = toBalance + amount;
 				fromBalance = fromBalance - amount;
+				System.out.println(fromBalance+"hhhhh");
 
-				String updateFromPocket = "update account set balance = ? where aid = ?";
-				PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updateFromPocket);
-				preparedUpdateStatement.setDouble(1, fromBalance);
-				preparedUpdateStatement.setString(2, from);
+				if (fromBalance < 0) {
+					System.out.println("mmmmm");
+					//result = "1";
+					return "1";
+				} else if (fromBalance == 0.01 || fromBalance == 0.00) {
+					String updateFromPocket = "update account set balance = ?, status = ? where aid = ?";
+					PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updateFromPocket);
+					preparedUpdateStatement.setDouble(1, fromBalance);
+					preparedUpdateStatement.setInt(2, 1);
+					preparedUpdateStatement.setString(3, from);
 
-				preparedUpdateStatement.executeUpdate();
+					preparedUpdateStatement.executeUpdate();
 
-				preparedUpdateStatement = _connection.prepareStatement(updateFromPocket);
-				preparedUpdateStatement.setDouble(1, toBalance);
-				preparedUpdateStatement.setString(2, to);
+					preparedUpdateStatement = _connection.prepareStatement(updateFromPocket);
+					preparedUpdateStatement.setDouble(1, toBalance);
+					preparedUpdateStatement.setInt(2, 0);
+					preparedUpdateStatement.setString(3, to);
 
-				preparedUpdateStatement.executeUpdate();
+					preparedUpdateStatement.executeUpdate();
 
-				addTransaction(this.getName(customerTaxID), "pays friend", amount, from, to, null);
+					System.out.println(fromBalance+"iiiii");
+					addTransaction(this.getName(customerTaxID), "pays friend", amount, from, to, null);
 
+					result = "0";
+				} else {
+
+					String updateFromPocket = "update account set balance = ? where aid = ?";
+					PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updateFromPocket);
+					preparedUpdateStatement.setDouble(1, fromBalance);
+					preparedUpdateStatement.setString(2, from);
+
+					preparedUpdateStatement.executeUpdate();
+
+					preparedUpdateStatement = _connection.prepareStatement(updateFromPocket);
+					preparedUpdateStatement.setDouble(1, toBalance);
+					preparedUpdateStatement.setString(2, to);
+
+					preparedUpdateStatement.executeUpdate();
+
+					System.out.println(fromBalance+"bbbbb");
+
+					addTransaction(this.getName(customerTaxID), "pays friend", amount, from, to, null);
+					result = "0";
+
+				}
 			}
 			else
 			{
 				System.out.println("Invalid destination pocket account id");
-				return "1";
+				result = "1";
+				//return "1";
 			}
+			System.out.println(fromBalance+"ddddd");
 
-			return ("0 " + fromBalance + " " + toBalance);
+
+			return (result + " " + fromBalance + " " + toBalance);
 		}
 		catch(SQLException e)
 		{
@@ -1813,7 +1852,7 @@ public class App implements Testable
 
 
 	// confused about transaction date, should it be the current date? or something else
-	public String addTransaction(String customerName, String trans_type, double amount, String from, String to, String checkNumber)
+	public void addTransaction(String customerName, String trans_type, double amount, String from, String to, String checkNumber)
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
@@ -1829,12 +1868,12 @@ public class App implements Testable
 			p.setString(6, to);
 			p.setString(7, checkNumber);
 			p.executeUpdate();
-			return "0";
+//			return "0";
 		}
 		catch(SQLException e)
 		{
 			System.err.println(e.getMessage());
-			return "1";
+//			return "1";
 		}
 	}
 
