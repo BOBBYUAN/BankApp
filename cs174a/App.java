@@ -821,35 +821,11 @@ public class App implements Testable
 			ps.setInt(1,3); // now here it doesn't matter primary key auto increment
 			ps.setDate(2,sqdate_str);
 			ps.executeUpdate();
-
-
-
-//			Date dt;
-//			String s = Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day);
-//			System.out.println(s);
-//			try
-//			{
-//				dt = new SimpleDateFormat("yyyy-MM-dd").parse(s);
-//				System.out.println(dt.toString());
-//			}
-//			catch (java.text.ParseException e)
-//			{
-//				System.out.println(e.getMessage());
-//			}
-//
-//			String createPrimary = "insert into Settings(current_date) values(to_date(?, 'YYYY-MM-DD'))";
-//			PreparedStatement insert = _connection.prepareStatement(createPrimary);
-//			insert.setDate(1, java.sql.Date.valueOf("2013-09-04")); //even hard coding doesnt work...
-//			insert.setString(1, s);
-//			insert.executeUpdate();
-//			return "0";
 		}
 		catch( SQLException e)
 		{
 			e.printStackTrace();
 			r = "1 ";
-//			System.err.println( e.getMessage() );
-//			return "1";
 		}
 		if (month < 10)
 		{
@@ -892,8 +868,6 @@ public class App implements Testable
 			if(resultSet.next())
 			{
 				java.sql.Date dbSqlDate = resultSet.getDate("SETTIME");
-//				java.util.Date dbSqlDateConverted = new java.util.Date(dbSqlDate.getTime());
-//				System.out.println(dbSqlDateConverted);
 				return dbSqlDate;
 			}
 			else
@@ -982,26 +956,35 @@ public class App implements Testable
 				p.setString(1, parentId);
 				resultSet = p.executeQuery();
 
-				while (resultSet.next()) {
+				while (resultSet.next())
+				{
 					double parentBal = Double.parseDouble(resultSet.getString(1));
 					parentNewBal = parentBal - amount;
 
-					if (parentNewBal < 0.00)
+					if (parentNewBal < 0)
 					{
+						//System.out.println("Not enough funds");
 						return "1";
-					}
-					else if (parentNewBal == 0.00 || parentBal == 0.01)
-					{
-						String u = "update account set status = 1 where aid = ?";
-						PreparedStatement preparedUpdateStatement = _connection.prepareStatement(u);
-						preparedUpdateStatement.setString(1, parentId);
+					} else if (parentNewBal == 0.00 || parentNewBal == 0.01) {
+						pocketNewBal = pocketBal + amount;
+
+						String updatePocketBalance = "update account set balance = ?, status = ? where aid = ?";
+						PreparedStatement preparedUpdateStatement = _connection.prepareStatement(updatePocketBalance);
+						preparedUpdateStatement.setDouble(1, pocketNewBal);
+						preparedUpdateStatement.setInt(2, 1);
+						preparedUpdateStatement.setString(3, accountId);
+
 						preparedUpdateStatement.executeUpdate();
 
-						u = "update account set status = 1 where pocket_linked_to = ?";
-						preparedUpdateStatement = _connection.prepareStatement(u);
-						preparedUpdateStatement.setString(1, accountId);
+						String updateParentBalance = "update account set balance = ?,status = ? where aid = ?";
+						preparedUpdateStatement = _connection.prepareStatement(updateParentBalance);
+						preparedUpdateStatement.setDouble(1, parentNewBal);
+						preparedUpdateStatement.setInt(2, 1);
+						preparedUpdateStatement.setString(3, parentId);
+
 						preparedUpdateStatement.executeUpdate();
-						return "1";
+
+						addTransaction(this.getName(customerTaxID), "tops up", amount, parentId, accountId, null);
 					}
 					else
 					{
@@ -1021,23 +1004,10 @@ public class App implements Testable
 
 						preparedUpdateStatement.executeUpdate();
 
-						String s = "select cname from account a, owners o, customer c " +
-								"where a.aid = ? and o.aid = a.pocket_linked_to and o.primary = 0 and c.cid = o.cid";
-						PreparedStatement pp = _connection.prepareStatement(s);
-						pp.setString(1, accountId);
-						ResultSet rr = pp.executeQuery();
+						addTransaction(this.getName(customerTaxID), "tops up", amount, parentId, accountId, null);
 
-						String n = "";
-						if(rr.next())
-						{
-							n = rr.getString(1);
-						}
-						else
-						{
-							return "1";
-						}
-						addTransaction(n, "tops up", amount, parentId, accountId, null);
 					}
+
 				}
 
 			}
@@ -1055,6 +1025,7 @@ public class App implements Testable
 			return "1";
 		}
 	}
+
 
 	@Override
 	public String payFriend( String from, String to, double amount ) // come back to fix cid check ownership
@@ -2623,7 +2594,7 @@ public class App implements Testable
 
 				if (resultSet.next()) {
 					a = resultSet.getDouble(1);
-					interest_rate = resultSet.getFloat(2);
+					interest_rate = resultSet.getFloat(2) / 12;
 
 				} else {
 					System.out.println("error");
@@ -2778,7 +2749,7 @@ public class App implements Testable
 						else
 							monthAmount += amount;
 						break;
-					case "accrues interest":
+					case "add interest":
 						if(to.equals(accountId))
 							monthAmount += amount;
 						break;
