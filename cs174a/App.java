@@ -169,6 +169,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 
 				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
@@ -193,6 +194,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -216,6 +218,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 				//result = "successful";
@@ -263,6 +266,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 
 				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
@@ -287,6 +291,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -310,6 +315,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 				//result = "successful";
@@ -332,7 +338,7 @@ public class App implements Testable
 	@Override
 	public String createCheckingSavingsAccount( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
 	{
-
+		customerTaxID = tin;
 		String result;
 		try( Statement statement = _connection.createStatement() )
 		{
@@ -363,8 +369,10 @@ public class App implements Testable
 
 						addPrimary(tin, id);
 
-
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 						result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
+
+
 
 					} else if (accountType == AccountType.STUDENT_CHECKING) {
 
@@ -379,6 +387,7 @@ public class App implements Testable
 						preparedStatement.executeQuery();
 
 						addPrimary(tin, id);
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 						result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -395,6 +404,7 @@ public class App implements Testable
 						preparedStatement.executeQuery();
 
 						addPrimary(tin, id);
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 						result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 
@@ -426,6 +436,7 @@ public class App implements Testable
 						preparedStatement.executeQuery();
 
 						addPrimary(tin, id);
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 
 						result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
@@ -450,6 +461,7 @@ public class App implements Testable
 						preparedStatement.executeQuery();
 
 						addPrimary(tin, id);
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 						result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -473,6 +485,7 @@ public class App implements Testable
 						preparedStatement.executeQuery();
 
 						addPrimary(tin, id);
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
 
 						result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 
@@ -681,6 +694,7 @@ public class App implements Testable
 	@Override
 	public String createPocketAccount( String id, String linkedId, double initialTopUp, String tin )
 	{
+		customerTaxID = tin;
 		String accountID = "";
 		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
@@ -699,7 +713,6 @@ public class App implements Testable
 					return "1";
 				}
 			}
-
 		}
 		catch( SQLException e )
 		{
@@ -709,21 +722,69 @@ public class App implements Testable
 
 		try( Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			String q = "insert into account (aid,cid,branch_name,balance,type,interest,status, pocket_linked_to) values (?,?,?,?,?,?,?,?)";
-			PreparedStatement preparedStatement = _connection.prepareStatement(q);
-			preparedStatement.setInt(1,Integer.parseInt(id));
-			preparedStatement.setString(2, tin);
-			preparedStatement.setString(3, "BOA");
-			preparedStatement.setDouble(4, initialTopUp);
-			preparedStatement.setString(5, "POCKET");
-			preparedStatement.setFloat(6, 0.00f);
-			preparedStatement.setInt(7, 0);
-			preparedStatement.setInt(8, Integer.parseInt(linkedId));
-			preparedStatement.executeUpdate();
 
-			addPrimary(tin, id);
+			if (initialTopUp < 0.01) {
+				return "1";
+			}
 
-			return("0 " + accountID + "POCKET " + initialTopUp + " " + tin);
+			String n = "select balance, status from account where aid = ?";
+			PreparedStatement preparedStatement = _connection.prepareStatement(n);
+			preparedStatement.setString(1,linkedId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			if (resultSet.next()) {
+				double initialLinkedAccountBalance = resultSet.getDouble(1);
+				double afterLinkedAccountBalance = initialLinkedAccountBalance - initialTopUp - 5;
+				if (afterLinkedAccountBalance < 0) {
+					return "1";
+				} else if (afterLinkedAccountBalance == 0.1 || afterLinkedAccountBalance == 0.0) {
+					String updateParentAccountBalance = "update account set balance = ?, status = ? where aid = ?";
+					preparedStatement = _connection.prepareStatement(updateParentAccountBalance);
+					preparedStatement.setDouble(1, afterLinkedAccountBalance);
+					preparedStatement.setInt(2,1);
+					preparedStatement.setString(3, linkedId);
+					preparedStatement.executeUpdate();
+
+					String q = "insert into account (aid,cid,branch_name,balance,type,interest,status, pocket_linked_to) values (?,?,?,?,?,?,?,?)";
+					preparedStatement = _connection.prepareStatement(q);
+					preparedStatement.setInt(1,Integer.parseInt(id));
+					preparedStatement.setString(2, tin);
+					preparedStatement.setString(3, "BOA");
+					preparedStatement.setDouble(4, initialTopUp);
+					preparedStatement.setString(5, "POCKET");
+					preparedStatement.setFloat(6, 0.00f);
+					preparedStatement.setInt(7, 1);
+					preparedStatement.setInt(8, Integer.parseInt(linkedId));
+					preparedStatement.executeUpdate();
+					addPrimary(tin, id);
+					addTransaction(this.getName(customerTaxID), "tops up", initialLinkedAccountBalance, linkedId, id, null);
+
+				} else {
+					String updateParentAccountBalance = "update account set balance = ? where aid = ?";
+					preparedStatement = _connection.prepareStatement(updateParentAccountBalance);
+					preparedStatement.setDouble(1, afterLinkedAccountBalance);
+					preparedStatement.setString(2, linkedId);
+					preparedStatement.executeUpdate();
+
+					String q = "insert into account (aid,cid,branch_name,balance,type,interest,status, pocket_linked_to) values (?,?,?,?,?,?,?,?)";
+					preparedStatement = _connection.prepareStatement(q);
+					preparedStatement.setInt(1,Integer.parseInt(id));
+					preparedStatement.setString(2, tin);
+					preparedStatement.setString(3, "BOA");
+					preparedStatement.setDouble(4, initialTopUp);
+					preparedStatement.setString(5, "POCKET");
+					preparedStatement.setFloat(6, 0.00f);
+					preparedStatement.setInt(7, 0);
+					preparedStatement.setInt(8, Integer.parseInt(linkedId));
+					preparedStatement.executeUpdate();
+					addPrimary(tin, id);
+					addTransaction(this.getName(customerTaxID), "tops up", initialTopUp, linkedId, id, null);
+
+				}
+
+			}
+
+			return("0 " + id + " POCKET " + initialTopUp + " " + tin);
 		}
 		catch( SQLException e )
 		{
@@ -2890,7 +2951,7 @@ public class App implements Testable
 					int choice2 = sc.nextInt();
 					int returningnew;
 
-
+					double initialBalance;
 					System.out.print("Type 0 if you are a returning customer or 1 if you are a new customer: ");
 					returningnew = sc.nextInt();
 
@@ -2906,21 +2967,29 @@ public class App implements Testable
 						switch (choice2)
 						{
 							case 1:
-								createCheckingSavingsAccount2(AccountType.INTEREST_CHECKING, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
+								System.out.print("How much you want to initialize? ");
+								initialBalance = sc.nextDouble();
+								createCheckingSavingsAccount2(AccountType.INTEREST_CHECKING, aid, initialBalance, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
 								break;
 							case 2:
-								createCheckingSavingsAccount2(AccountType.STUDENT_CHECKING, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
+								System.out.print("How much you want to initialize? ");
+								initialBalance = sc.nextDouble();
+								createCheckingSavingsAccount2(AccountType.STUDENT_CHECKING, aid, initialBalance, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
 								break;
 							case 3:
-								createCheckingSavingsAccount2(AccountType.SAVINGS, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
+								System.out.print("How much you want to initialize? ");
+								initialBalance = sc.nextDouble();
+								createCheckingSavingsAccount2(AccountType.SAVINGS, aid, initialBalance, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
 								break;
 							case 4:
 								System.out.print("What checking/savings account id do you wish to link your pocket account to? ");
 								String linked = sc.next();
-								createPocketAccount(aid, linked, 50, customerTaxID);
-								System.out.println(aid);
-								System.out.println(linked);
-								System.out.println(customerTaxID);
+								System.out.print("How much you want to initialize? ");
+								initialBalance = sc.nextDouble();
+								createPocketAccount(aid, linked, initialBalance, customerTaxID);
+//								System.out.println(aid);
+//								System.out.println(linked);
+//								System.out.println(customerTaxID);
 								break;
 						}
 						break;
@@ -2935,7 +3004,9 @@ public class App implements Testable
 								String n = sc.nextLine();
 								System.out.println("What is your address?");
 								String add = sc.next();
-								createCheckingSavingsAccount3(AccountType.INTEREST_CHECKING, aid, 1000, customerTaxID, n, add);
+								System.out.print("How much you want to initialize? ");
+								initialBalance = sc.nextDouble();
+								createCheckingSavingsAccount3(AccountType.INTEREST_CHECKING, aid, initialBalance, customerTaxID, n, add);
 								break;
 							case 2:
 								System.out.println("What is your name?");
@@ -2943,7 +3014,9 @@ public class App implements Testable
 								n = sc.nextLine();
 								System.out.println("What is your address?");
 								add = sc.next();
-								createCheckingSavingsAccount3(AccountType.STUDENT_CHECKING, aid, 1000, customerTaxID, n, add);
+								System.out.print("How much you want to initialize? ");
+								initialBalance = sc.nextDouble();
+								createCheckingSavingsAccount3(AccountType.STUDENT_CHECKING, aid, initialBalance, customerTaxID, n, add);
 								break;
 							case 3:
 								System.out.println("What is your name? ");
@@ -2951,12 +3024,16 @@ public class App implements Testable
 								n = sc.nextLine();
 								System.out.println("What is your address? ");
 								add = sc.next();
-								createCheckingSavingsAccount3(AccountType.SAVINGS, aid, 1000, customerTaxID, n, add);
+								System.out.print("How much you want to initialize? ");
+								initialBalance = sc.nextDouble();
+								createCheckingSavingsAccount3(AccountType.SAVINGS, aid, initialBalance, customerTaxID, n, add);
 								break;
 							case 4:
 								System.out.print("What checking/savings account id do you wish to link your pocket account to? ");
 								String linked = sc.next();
-								createPocketAccount(aid, linked, 50, customerTaxID);
+								System.out.print("How much you want to initialize? ");
+								initialBalance = sc.nextDouble();
+								createPocketAccount(aid, linked, initialBalance, customerTaxID);
 								break;
 						}
 					}

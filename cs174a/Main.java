@@ -24,7 +24,7 @@ public class Main
 		String r = app.initializeSystem();          // We'll always call this function before testing your system.
 
 
-		//app.uiMenu();
+		app.uiMenu();
 
 		if( r.equals( "0" ) )
 		{
@@ -35,82 +35,56 @@ public class Main
 //			r = app.dropTables();
 //			System.out.println( r );
 
-			// Example tests.  We'll overwrite your Main.main() function with our final tests.
-//			r = app.listClosedAccounts();            // done
+
+//			// 2011-3-11 initialize data
+//			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "17431", 1200, "344151573", "Joe Pepsi", "3210 State St" );               ///done
+//			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "54321", 21000, "212431965", "Hurryson Ford", "678 State St" );               ///done
+//			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "12121", 1200, "207843218", "David Copperfill", "1357 State St" );               ///done
+//			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "41725", 15000, "201674933", "George Brush", "5346 Foothill Av" );               ///done
+//			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "93156", 2000000, "209378521", "Kelvin Costner", "Santa Cruz #3579" );               ///done
+//			System.out.println( r );
+//			r = app.createPocketAccount("53027", "12121", 50, "207843218");  /// done
+//			System.out.println(r);
+//			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "43942", 1289, "361721022", "Alfred Hitchcock", "6667 El Colegio #40" );               ///done
+//			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "29107", 34000, "209378521", "Kelvin Costner", "Santa Cruz #3579" );               ///done
+//			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "19023", 2300, "412231856", "Cindy Laugher", "7000 Hollister" );               ///done
 //			System.out.println( r );
 
-//			 Another example test.
-//			r = app.createCheckingSavingsAccount2( AccountType.SAVINGS, "111", 1234.56, "111", "adfasdf", "Known" );               ///done
+			// For Pit wilson
+//			r = app.createCustomer("43942", "400651982", "Pit Wilson", "911 State St");  /// done
+//			System.out.println(r);
+			// manually add the coowner for pit wilson
+//			r = app.createPocketAccount("60413", "43942", 20, "400651982");  /// done
+//			System.out.println(r);
+
+//			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "32156", 1000, "188212217", "Magic Jordon", "3852 Court Rd" );               ///done
 //			System.out.println( r );
-//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "87878", 100, "666", "aaa", "bbb" );  /// done
+//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "76543", 8456, "212116070", "Li Kung", "2 People's Rd Beijin" );               ///done
 //			System.out.println( r );
-
-//			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "78", 1234.56, "222", "adfasdf", "Known" );      // done
-//			System.out.println( r );
-//
-//			r = app.deposit("222", 100.00); /// done
+//			r = app.createPocketAccount("43947", "29107", 30, "207843218");  /// done
 //			System.out.println(r);
 
-			r = app.showBalance("33333");   /// done
-			System.out.println(r);
-
-			r = app.createPocketAccount("99999", "98765", 80.00, "95509");  /// done
-			System.out.println(r);
-
-			// sets date to be nov 10 2010
-//			r = app.setDate(2010, 10, 10);
+			// For Fatal Castro
+//			r = app.createCustomer("41725", "401605312", "Fatal Castro", "3756 La Cumbre Plaza");  /// done
+//			System.out.println(r);
+//			r = app.createPocketAccount("67521", "19023", 100, "401605312");  /// done
 //			System.out.println(r);
 
-//			r = app.createCustomer("33333", "80888", "new", "new");   /// done
-//			System.out.println(r);
+			//------NOW SET NEW DATE START TRANSACTION
 
 
-//			r = app.topUp("3", 10);  /// done
-//			System.out.println(r);
 
-//			r = app.payFriend("33333", "78678", 1000);
-//			System.out.println(r);
-
-//			r = app.withdrawal("1", 3);
-//			System.out.println(r);
-
-//			r = app.purchase("2", 60);
-//			System.out.println(r);
-
-//			r = app.addPrimary("1", "2");
-//			System.out.println(r);
-
-//			r = app.addCoowner("1", "2");
-//			System.out.println(r);
-
-//			r = app.transfer("1", "4", "1", 6);
-//			System.out.println(r);
-
-//			r = app.collect("2", "1", 10);
-//			System.out.println(r);
-
-//			r = app.wire("2", "2", "4", 10);
-//			System.out.println(r);
-
-//			r = app.writeCheck("4", 4.00);
-//			System.out.println(r);
-
-//			r = app.encryptPin("1717");
-//			System.out.println(r);
-
-//			app.verifyPin("100", "1234");
-//			app.setPin("100", "1717", "1234");
-
-//			r = app.deleteTransactions();
-//			System.out.println(r);
-
-//			r = app.getCustomerReport("2");
-//			System.out.println(r);
 
 //			java.sql.Date dt = app.getDate();
 //			System.out.println(dt);
 
-//			r = app.setDate(2008, 8, 8);     // done and tested correct output
+//			r = app.setDate(2011, 3, 1);     // done and tested correct output
 //			System.out.println(r);
 
 //			System.out.println(app.checkEndOfMonth(app.getDate()));
