@@ -59,7 +59,7 @@ public class Main
 //			r = app.setDate(2010, 10, 10);
 //			System.out.println(r);
 
-//			r = app.createCustomer("55555", "333", "new", "new");   /// done
+//			r = app.createCustomer("400651982", "Pit Wilson ", "new", "new");   /// done
 //			System.out.println(r);
 
 
@@ -108,7 +108,7 @@ public class Main
 //			java.sql.Date dt = app.getDate();
 //			System.out.println(dt);
 
-			r = app.setDate(2019, 7, 31);     // done and tested correct output
+//			r = app.setDate(2019, 7, 31);     // done and tested correct output
 //			System.out.println(r);
 
 //			System.out.println(app.checkEndOfMonth(app.getDate()));

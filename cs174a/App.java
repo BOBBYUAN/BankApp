@@ -162,12 +162,14 @@ public class App implements Testable
 				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "CHASE");
+				preparedStatement.setString(3, "BOA");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "INTEREST_CHECKING");
 				preparedStatement.setFloat(6, 0.03f);
 				preparedStatement.setInt(7, 0);
 				preparedStatement.executeQuery();
+
+				addPrimary(tin, id);
 
 
 				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
@@ -185,12 +187,13 @@ public class App implements Testable
 				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "CHASE");
+				preparedStatement.setString(3, "BOA");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "STUDENT_CHECKING");
 				preparedStatement.setFloat(6, 0.00f);
 				preparedStatement.executeQuery();
 
+				addPrimary(tin, id);
 
 				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -207,11 +210,13 @@ public class App implements Testable
 				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "CHASE");
+				preparedStatement.setString(3, "BOA");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "SAVINGS");
 				preparedStatement.setFloat(6, 0.048f);
 				preparedStatement.executeQuery();
+
+				addPrimary(tin, id);
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 				//result = "successful";
@@ -251,12 +256,14 @@ public class App implements Testable
 				preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "CHASE");
+				preparedStatement.setString(3, "BOA");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "INTEREST_CHECKING");
 				preparedStatement.setFloat(6, 0.03f);
 				preparedStatement.setInt(7, 0);
 				preparedStatement.executeQuery();
+
+				addPrimary(tin, id);
 
 
 				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
@@ -274,12 +281,13 @@ public class App implements Testable
 				preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "CHASE");
+				preparedStatement.setString(3, "BOA");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "STUDENT_CHECKING");
 				preparedStatement.setFloat(6, 0.00f);
 				preparedStatement.executeQuery();
 
+				addPrimary(tin, id);
 
 				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -296,11 +304,13 @@ public class App implements Testable
 				preparedStatement = _connection.prepareStatement(sql2);
 				preparedStatement.setInt(1,Integer.parseInt(id));
 				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "CHASE");
+				preparedStatement.setString(3, "BOA");
 				preparedStatement.setDouble(4, initialBalance);
 				preparedStatement.setString(5, "SAVINGS");
 				preparedStatement.setFloat(6, 0.048f);
 				preparedStatement.executeQuery();
+
+				addPrimary(tin, id);
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 				//result = "successful";
@@ -513,7 +523,7 @@ public class App implements Testable
 					"(account.type = 'INTEREST_CHECKING' or account.type = 'STUDENT_CHECKING' or account.type = 'SAVINGS') and " +
 					"account.balance > 0.01";
 			PreparedStatement preparedStatement = _connection.prepareStatement(sql);
-			preparedStatement.setString(1, tin);
+			preparedStatement.setString(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while(resultSet.next())
 			{
@@ -538,14 +548,15 @@ public class App implements Testable
 			PreparedStatement preparedStatement = _connection.prepareStatement(q);
 			preparedStatement.setInt(1,Integer.parseInt(id));
 			preparedStatement.setString(2, tin);
-			preparedStatement.setString(3, "CHASE");
+			preparedStatement.setString(3, "BOA");
 			preparedStatement.setDouble(4, initialTopUp);
 			preparedStatement.setString(5, "POCKET");
 			preparedStatement.setFloat(6, 0.00f);
 			preparedStatement.setInt(7, 0);
 			preparedStatement.setInt(8, Integer.parseInt(linkedId));
 			preparedStatement.executeUpdate();
-			System.out.println("SUCESS");
+
+			addPrimary(tin, id);
 
 			return("0 " + accountID + "POCKET " + initialTopUp + " " + tin);
 		}
@@ -570,7 +581,7 @@ public class App implements Testable
 		//java.util.Date date = parseDate(date_str);
 
 
-		final String INSERT_INTO_System_Date = "INSERT INTO SETTINGTIMES "
+		final String INSERT_INTO_System_Date = "INSERT INTO SETTINGTIMES(ID, SETTIME)"
 				+ "VALUES (?,?)";
 
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
@@ -862,7 +873,6 @@ public class App implements Testable
 				toBalance = Double.parseDouble(resultSet2.getString(1));
 				toBalance = toBalance + amount;
 				fromBalance = fromBalance - amount;
-				System.out.println(fromBalance+"hhhhh");
 
 				if (fromBalance < 0) {
 					System.out.println("mmmmm");
@@ -884,7 +894,6 @@ public class App implements Testable
 
 					preparedUpdateStatement.executeUpdate();
 
-					System.out.println(fromBalance+"iiiii");
 					addTransaction(this.getName(customerTaxID), "pays friend", amount, from, to, null);
 
 					result = "0";
@@ -903,7 +912,6 @@ public class App implements Testable
 
 					preparedUpdateStatement.executeUpdate();
 
-					System.out.println(fromBalance+"bbbbb");
 
 					addTransaction(this.getName(customerTaxID), "pays friend", amount, from, to, null);
 					result = "0";
@@ -916,7 +924,6 @@ public class App implements Testable
 				result = "1";
 				//return "1";
 			}
-			System.out.println(fromBalance+"ddddd");
 
 
 			return (result + " " + fromBalance + " " + toBalance);
@@ -965,7 +972,6 @@ public class App implements Testable
 
 				bal = Double.parseDouble(resultSet.getString(1));
 				newBal = bal - amount;
-				System.out.println(newBal);
 
 				// if the balance is 0.00 or 0.01, then we close the account
 				if (newBal == 0.01 || newBal == 0.00)
@@ -1251,11 +1257,11 @@ public class App implements Testable
 				System.out.println("Invalid customerId or invalid source account id or invalid desination id");
 				return "1";
 			}
-			if (Integer.parseInt(resultSet.getString(2)) == 1)
-			{
-				System.out.println("Customer must be a primary account owner on source account to do transfer");
-				return "1";
-			}
+//			if (Integer.parseInt(resultSet.getString(2)) == )
+//			{
+//				System.out.println("Customer must be a primary account owner on source account to do transfer");
+//				return "1";
+//			}
 
 
 			String checkIsCoowner = "select cid, primary from owners where cid = ? and aid = ?";
@@ -1270,11 +1276,11 @@ public class App implements Testable
 				System.out.println("Invalid customerId or invalid source account id or invalid desination id");
 				return "1";
 			}
-			if (Integer.parseInt(resultSet.getString(2)) == 1)
-			{
-				System.out.println("Customer must be a primary on destination account to do transfer");
-				return "1";
-			}
+//			if (Integer.parseInt(resultSet.getString(2)) == 1)
+//			{
+//				System.out.println("Customer must be a primary on destination account to do transfer");
+//				return "1";
+//			}
 
 
 			String fromCheckingsOrSavings = "select balance, status from account where aid = ? and " +
@@ -1688,7 +1694,6 @@ public class App implements Testable
 		System.out.println(amount);
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) )
 		{
-			System.out.println("HELLOE");
 
 			if (amount < 0)
 			{
@@ -2663,7 +2668,7 @@ public class App implements Testable
 
 		while (choice != 10) {
 
-			Scanner sc = new Scanner(System.in);
+			Scanner sc = new Scanner(System.in).useDelimiter("\n");
 			System.out.println("Bank Teller");
 			System.out.println("1. Enter Check Transaction");
 			System.out.println("2. Generate Monthly Statement");
@@ -2684,12 +2689,13 @@ public class App implements Testable
 				case 1:
 					System.out.print("Enter account id: ");
 					String accId = sc.next();
+					customerTaxID = accId;
 					System.out.print("Enter amount: ");
 					double a = sc.nextDouble();
 					writeCheck(accId, a);
 					break;
 				case 2:
-					System.out.print("Enter account id: ");
+					System.out.print("Enter tax identification number: ");
 					accId = sc.next();
 					generateMonthlyStatement(accId);  // to do
 					break;
@@ -2759,23 +2765,26 @@ public class App implements Testable
 						switch (choice2)
 						{
 							case 1:
-								System.out.print("What is your name? ");
-								String n = sc.next();
-								System.out.print("What is your address? ");
+								System.out.println("What is your name?");
+								sc.nextLine();
+								String n = sc.nextLine();
+								System.out.println("What is your address?");
 								String add = sc.next();
 								createCheckingSavingsAccount2(AccountType.INTEREST_CHECKING, aid, 1000, customerTaxID, n, add);
 								break;
 							case 2:
-								System.out.print("What is your name? ");
-								n = sc.next();
-								System.out.print("What is your address? ");
+								System.out.println("What is your name?");
+								sc.nextLine();
+								n = sc.nextLine();
+								System.out.println("What is your address?");
 								add = sc.next();
 								createCheckingSavingsAccount2(AccountType.STUDENT_CHECKING, aid, 1000, customerTaxID, n, add);
 								break;
 							case 3:
-								System.out.print("What is your name? ");
-								n = sc.next();
-								System.out.print("What is your address? ");
+								System.out.println("What is your name? ");
+								sc.nextLine();
+								n = sc.nextLine();
+								System.out.println("What is your address? ");
 								add = sc.next();
 								createCheckingSavingsAccount2(AccountType.SAVINGS, aid, 1000, customerTaxID, n, add);
 								break;
