@@ -20,11 +20,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="333">
-              <caret line="47" column="87" lean-forward="true" selection-start-line="47" selection-start-column="87" selection-end-line="47" selection-end-column="87" />
+            <state relative-caret-position="206">
+              <caret line="56" column="71" selection-start-line="56" selection-start-column="71" selection-end-line="56" selection-end-column="71" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -35,8 +35,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cs174a/App.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="402" column="16" selection-start-line="402" selection-start-column="16" selection-end-line="402" selection-end-column="16" />
+            <state relative-caret-position="136">
+              <caret line="3018" column="92" selection-start-line="3018" selection-start-column="86" selection-end-line="3018" selection-end-column="92" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -44,10 +44,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
+            <state relative-caret-position="-741">
               <caret line="67" column="21" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="21" />
             </state>
           </provider>
@@ -65,15 +65,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>delete</find>
-      <find>checkOwner</find>
-      <find>closedAcc</find>
-      <find>initialize</find>
-      <find>dropTabe</find>
-      <find>createtable</find>
-      <find>create</find>
-      <find>setDate</find>
-      <find>deposit</find>
       <find>deleteTransaction</find>
       <find>createchecking</find>
       <find>0.15</find>
@@ -88,13 +79,22 @@
       <find>getDate</find>
       <find>11</find>
       <find>pocketAccount</find>
-      <find>createPocketAccount</find>
       <find>initia</find>
       <find>uiMenu</find>
       <find>createCustomer</find>
       <find>createCheckingsAVINGSaCCOUNT</find>
-      <find>createChec</find>
+      <find>createch</find>
+      <find>createPocketAccount</find>
+      <find>createcheckingsavingsaccount2</find>
+      <find>createcheckingsavingsaccount3</find>
       <find>createcheckingsavingsaccount</find>
+      <find>createpocket</find>
+      <find>createcustomer</find>
+      <find>createpocketaccount</find>
+      <find>createChec</find>
+      <find>collect</find>
+      <find>topup</find>
+      <find>top up</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -217,12 +217,12 @@
       <workItem from="1575231301853" duration="40171000" />
       <workItem from="1575441560124" duration="404000" />
       <workItem from="1575512833701" duration="8913000" />
-      <workItem from="1575597394952" duration="6290000" />
+      <workItem from="1575597394952" duration="10864000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="108118000" />
+    <option name="totallyTimeSpent" value="112692000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
@@ -245,7 +245,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32876712" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49919224" visible="true" weight="0.31917807" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49919224" visible="true" weight="0.31643835" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50080776" side_tool="true" weight="0.48356164" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32868218" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -348,30 +348,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
+    <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="67" column="21" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="21" />
+        <state relative-caret-position="206">
+          <caret line="56" column="71" selection-start-line="56" selection-start-column="71" selection-end-line="56" selection-end-column="71" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/App.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="402" column="16" selection-start-line="402" selection-start-column="16" selection-end-line="402" selection-end-column="16" />
+        <state relative-caret-position="136">
+          <caret line="3018" column="92" selection-start-line="3018" selection-start-column="86" selection-end-line="3018" selection-end-column="92" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
+    <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="333">
-          <caret line="47" column="87" lean-forward="true" selection-start-line="47" selection-start-column="87" selection-end-line="47" selection-end-column="87" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="-741">
+          <caret line="67" column="21" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="21" />
         </state>
       </provider>
     </entry>

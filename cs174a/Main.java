@@ -22,9 +22,9 @@ public class Main
 		App app = new App();                        // We need the default constructor of your App implementation.  Make sure such
 													// constructor exists.
 		String r = app.initializeSystem();          // We'll always call this function before testing your system.
+
+
 		//app.uiMenu();
-
-
 
 		if( r.equals( "0" ) )
 		{
@@ -42,8 +42,8 @@ public class Main
 //			 Another example test.
 //			r = app.createCheckingSavingsAccount2( AccountType.SAVINGS, "111", 1234.56, "111", "adfasdf", "Known" );               ///done
 //			System.out.println( r );
-			r = app.createCheckingSavingsAccount3( AccountType.INTEREST_CHECKING, "44444", 140000, "9012", "aaa", "bbb" );  /// done
-			System.out.println( r );
+//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "87878", 100, "666", "aaa", "bbb" );  /// done
+//			System.out.println( r );
 
 //			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "78", 1234.56, "222", "adfasdf", "Known" );      // done
 //			System.out.println( r );
@@ -51,17 +51,17 @@ public class Main
 //			r = app.deposit("222", 100.00); /// done
 //			System.out.println(r);
 
-//			r = app.showBalance("222");   /// done
-//			System.out.println(r);
+			r = app.showBalance("33333");   /// done
+			System.out.println(r);
 
-//			r = app.createPocketAccount("3", "13345", 80.00, "0221");  /// done
-//			System.out.println(r);
+			r = app.createPocketAccount("99999", "98765", 80.00, "95509");  /// done
+			System.out.println(r);
 
 			// sets date to be nov 10 2010
 //			r = app.setDate(2010, 10, 10);
 //			System.out.println(r);
 
-//			r = app.createCustomer("111", "Pit Wilson ", "new", "new");   /// done
+//			r = app.createCustomer("33333", "80888", "new", "new");   /// done
 //			System.out.println(r);
 
 
@@ -110,12 +110,10 @@ public class Main
 //			java.sql.Date dt = app.getDate();
 //			System.out.println(dt);
 
-//			r = app.setDate(2019, 7, 31);     // done and tested correct output
+//			r = app.setDate(2008, 8, 8);     // done and tested correct output
 //			System.out.println(r);
 
 //			System.out.println(app.checkEndOfMonth(app.getDate()));
-
-
 		}
 	}
 	//!### FINALIZAMOS

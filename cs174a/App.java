@@ -139,100 +139,6 @@ public class App implements Testable
 	/**
 	 * Another example.
 	 */
-	@Override
-	public String createCheckingSavingsAccount( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
-	{
-
-		String result;
-		try( Statement statement = _connection.createStatement() )
-		{
-
-			if (accountType == AccountType.INTEREST_CHECKING) {
-//				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
-//				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
-//				preparedStatement.setString(1,tin);
-//				preparedStatement.setString(2, name);
-//				preparedStatement.setString(3, address);
-//				preparedStatement.setString(4, encryptPin("1717"));
-//				preparedStatement.executeQuery();
-
-
-				String sql2 = "insert into account (aid,cid,branch_name,balance,type,interest,status) values (?,?,?,?,?,?,?)";
-				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
-				preparedStatement.setInt(1,Integer.parseInt(id));
-				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "BOA");
-				preparedStatement.setDouble(4, initialBalance);
-				preparedStatement.setString(5, "INTEREST_CHECKING");
-				preparedStatement.setFloat(6, 0.03f);
-				preparedStatement.setInt(7, 0);
-				preparedStatement.executeQuery();
-
-				addPrimary(tin, id);
-
-
-				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
-
-			} else if (accountType == AccountType.STUDENT_CHECKING) {
-//				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
-//				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
-//				preparedStatement.setString(1,tin);
-//				preparedStatement.setString(2, name);
-//				preparedStatement.setString(3, address);
-//				preparedStatement.setString(4, encryptPin("1717"));
-//				preparedStatement.executeQuery();
-
-				String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
-				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
-				preparedStatement.setInt(1,Integer.parseInt(id));
-				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "BOA");
-				preparedStatement.setDouble(4, initialBalance);
-				preparedStatement.setString(5, "STUDENT_CHECKING");
-				preparedStatement.setFloat(6, 0.00f);
-				preparedStatement.executeQuery();
-
-				addPrimary(tin, id);
-
-				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
-
-			} else if (accountType == AccountType.SAVINGS) {
-//				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
-//				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
-//				preparedStatement.setString(1,tin);
-//				preparedStatement.setString(2, name);
-//				preparedStatement.setString(3, address);
-//				preparedStatement.setString(4, encryptPin("1717"));
-//				preparedStatement.executeQuery();
-
-				String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
-				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
-				preparedStatement.setInt(1,Integer.parseInt(id));
-				preparedStatement.setString(2, tin);
-				preparedStatement.setString(3, "BOA");
-				preparedStatement.setDouble(4, initialBalance);
-				preparedStatement.setString(5, "SAVINGS");
-				preparedStatement.setFloat(6, 0.048f);
-				preparedStatement.executeQuery();
-
-				addPrimary(tin, id);
-
-				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
-				//result = "successful";
-
-			} else {
-				result = "1";
-			}
-		}
-		catch( SQLException e )
-		{
-			result = "1";
-			System.err.println( e.getMessage() );
-		}
-
-		return result;
-		//return "0 " + id + " " + accountType + " " + initialBalance + " " + tin;
-	}
 
 	public String createCheckingSavingsAccount2( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
 	{
@@ -242,6 +148,100 @@ public class App implements Testable
 		{
 
 			if (accountType == AccountType.INTEREST_CHECKING) {
+//				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
+//				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
+//				preparedStatement.setString(1,tin);
+//				preparedStatement.setString(2, name);
+//				preparedStatement.setString(3, address);
+//				preparedStatement.setString(4, encryptPin("1717"));
+//				preparedStatement.executeQuery();
+
+
+				String sql2 = "insert into account (aid,cid,branch_name,balance,type,interest,status) values (?,?,?,?,?,?,?)";
+				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
+				preparedStatement.setInt(1,Integer.parseInt(id));
+				preparedStatement.setString(2, tin);
+				preparedStatement.setString(3, "BOA");
+				preparedStatement.setDouble(4, initialBalance);
+				preparedStatement.setString(5, "INTEREST_CHECKING");
+				preparedStatement.setFloat(6, 0.03f);
+				preparedStatement.setInt(7, 0);
+				preparedStatement.executeQuery();
+
+				addPrimary(tin, id);
+
+
+				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
+
+			} else if (accountType == AccountType.STUDENT_CHECKING) {
+//				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
+//				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
+//				preparedStatement.setString(1,tin);
+//				preparedStatement.setString(2, name);
+//				preparedStatement.setString(3, address);
+//				preparedStatement.setString(4, encryptPin("1717"));
+//				preparedStatement.executeQuery();
+
+				String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
+				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
+				preparedStatement.setInt(1,Integer.parseInt(id));
+				preparedStatement.setString(2, tin);
+				preparedStatement.setString(3, "BOA");
+				preparedStatement.setDouble(4, initialBalance);
+				preparedStatement.setString(5, "STUDENT_CHECKING");
+				preparedStatement.setFloat(6, 0.00f);
+				preparedStatement.executeQuery();
+
+				addPrimary(tin, id);
+
+				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
+
+			} else if (accountType == AccountType.SAVINGS) {
+//				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
+//				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
+//				preparedStatement.setString(1,tin);
+//				preparedStatement.setString(2, name);
+//				preparedStatement.setString(3, address);
+//				preparedStatement.setString(4, encryptPin("1717"));
+//				preparedStatement.executeQuery();
+
+				String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
+				PreparedStatement preparedStatement = _connection.prepareStatement(sql2);
+				preparedStatement.setInt(1,Integer.parseInt(id));
+				preparedStatement.setString(2, tin);
+				preparedStatement.setString(3, "BOA");
+				preparedStatement.setDouble(4, initialBalance);
+				preparedStatement.setString(5, "SAVINGS");
+				preparedStatement.setFloat(6, 0.048f);
+				preparedStatement.executeQuery();
+
+				addPrimary(tin, id);
+
+				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
+				//result = "successful";
+
+			} else {
+				result = "1";
+			}
+		}
+		catch( SQLException e )
+		{
+			result = "1";
+			System.err.println( e.getMessage() );
+		}
+
+		return result;
+		//return "0 " + id + " " + accountType + " " + initialBalance + " " + tin;
+	}
+
+	public String createCheckingSavingsAccount3( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
+	{
+
+		String result;
+		try( Statement statement = _connection.createStatement() )
+		{
+
+			if (accountType == AccountType.INTEREST_CHECKING) {
 				String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
 				PreparedStatement preparedStatement = _connection.prepareStatement(sql1);
 				preparedStatement.setString(1,tin);
@@ -329,17 +329,19 @@ public class App implements Testable
 		//return "0 " + id + " " + accountType + " " + initialBalance + " " + tin;
 	}
 
-
-	public String createCheckingSavingsAccount3( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
+	@Override
+	public String createCheckingSavingsAccount( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
 	{
 
 		String result;
 		try( Statement statement = _connection.createStatement() )
 		{
 
+				if (initialBalance < 1000) {
+					return "1";
+				}
 
-
-				String sql3 = "select * from Account A where A.cid = ?";
+				String sql3 = "select * from Customer C where C.cid = ?";
 				PreparedStatement preparedStatement = _connection.prepareStatement(sql3);
 				preparedStatement.setString(1,tin);
 				ResultSet resultset = preparedStatement.executeQuery();
@@ -2904,13 +2906,13 @@ public class App implements Testable
 						switch (choice2)
 						{
 							case 1:
-								createCheckingSavingsAccount(AccountType.INTEREST_CHECKING, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
+								createCheckingSavingsAccount2(AccountType.INTEREST_CHECKING, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
 								break;
 							case 2:
-								createCheckingSavingsAccount(AccountType.STUDENT_CHECKING, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
+								createCheckingSavingsAccount2(AccountType.STUDENT_CHECKING, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
 								break;
 							case 3:
-								createCheckingSavingsAccount(AccountType.SAVINGS, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
+								createCheckingSavingsAccount2(AccountType.SAVINGS, aid, 1000, customerTaxID, this.getName(customerTaxID), this.getAddress(customerTaxID));
 								break;
 							case 4:
 								System.out.print("What checking/savings account id do you wish to link your pocket account to? ");
@@ -2933,7 +2935,7 @@ public class App implements Testable
 								String n = sc.nextLine();
 								System.out.println("What is your address?");
 								String add = sc.next();
-								createCheckingSavingsAccount2(AccountType.INTEREST_CHECKING, aid, 1000, customerTaxID, n, add);
+								createCheckingSavingsAccount3(AccountType.INTEREST_CHECKING, aid, 1000, customerTaxID, n, add);
 								break;
 							case 2:
 								System.out.println("What is your name?");
@@ -2941,7 +2943,7 @@ public class App implements Testable
 								n = sc.nextLine();
 								System.out.println("What is your address?");
 								add = sc.next();
-								createCheckingSavingsAccount2(AccountType.STUDENT_CHECKING, aid, 1000, customerTaxID, n, add);
+								createCheckingSavingsAccount3(AccountType.STUDENT_CHECKING, aid, 1000, customerTaxID, n, add);
 								break;
 							case 3:
 								System.out.println("What is your name? ");
@@ -2949,7 +2951,7 @@ public class App implements Testable
 								n = sc.nextLine();
 								System.out.println("What is your address? ");
 								add = sc.next();
-								createCheckingSavingsAccount2(AccountType.SAVINGS, aid, 1000, customerTaxID, n, add);
+								createCheckingSavingsAccount3(AccountType.SAVINGS, aid, 1000, customerTaxID, n, add);
 								break;
 							case 4:
 								System.out.print("What checking/savings account id do you wish to link your pocket account to? ");
