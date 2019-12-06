@@ -70,8 +70,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##grousseva";
-		final String DB_PASSWORD = "8611311";
+		final String DB_USER = "c##wangcheng";
+		final String DB_PASSWORD = "7429699";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();
@@ -317,6 +317,170 @@ public class App implements Testable
 			} else {
 				result = "1";
 			}
+		}
+		catch( SQLException e )
+		{
+			result = "1";
+			System.err.println( e.getMessage() );
+		}
+
+
+		return result;
+		//return "0 " + id + " " + accountType + " " + initialBalance + " " + tin;
+	}
+
+
+	public String createCheckingSavingsAccount3( AccountType accountType, String id, double initialBalance, String tin, String name, String address )
+	{
+
+		String result;
+		try( Statement statement = _connection.createStatement() )
+		{
+
+
+
+				String sql3 = "select * from Account A where A.cid = ?";
+				PreparedStatement preparedStatement = _connection.prepareStatement(sql3);
+				preparedStatement.setString(1,tin);
+				ResultSet resultset = preparedStatement.executeQuery();
+
+				if (resultset.next()) {   // return customer
+
+					if (accountType == AccountType.INTEREST_CHECKING) {
+
+						String sql2 = "insert into account (aid,cid,branch_name,balance,type,interest,status) values (?,?,?,?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql2);
+						preparedStatement.setInt(1,Integer.parseInt(id));
+						preparedStatement.setString(2, tin);
+						preparedStatement.setString(3, "BOA");
+						preparedStatement.setDouble(4, initialBalance);
+						preparedStatement.setString(5, "INTEREST_CHECKING");
+						preparedStatement.setFloat(6, 0.03f);
+						preparedStatement.setInt(7, 0);
+						preparedStatement.executeQuery();
+
+						addPrimary(tin, id);
+
+
+						result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
+
+					} else if (accountType == AccountType.STUDENT_CHECKING) {
+
+						String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql2);
+						preparedStatement.setInt(1,Integer.parseInt(id));
+						preparedStatement.setString(2, tin);
+						preparedStatement.setString(3, "BOA");
+						preparedStatement.setDouble(4, initialBalance);
+						preparedStatement.setString(5, "STUDENT_CHECKING");
+						preparedStatement.setFloat(6, 0.00f);
+						preparedStatement.executeQuery();
+
+						addPrimary(tin, id);
+
+						result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
+
+					} else if (accountType == AccountType.SAVINGS) {
+
+						String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql2);
+						preparedStatement.setInt(1,Integer.parseInt(id));
+						preparedStatement.setString(2, tin);
+						preparedStatement.setString(3, "BOA");
+						preparedStatement.setDouble(4, initialBalance);
+						preparedStatement.setString(5, "SAVINGS");
+						preparedStatement.setFloat(6, 0.048f);
+						preparedStatement.executeQuery();
+
+						addPrimary(tin, id);
+
+						result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
+
+					} else {
+						result = "1";
+					}
+
+				} else {     // new customer
+
+					if (accountType == AccountType.INTEREST_CHECKING) {
+						String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql1);
+						preparedStatement.setString(1,tin);
+						preparedStatement.setString(2, name);
+						preparedStatement.setString(3, address);
+						preparedStatement.setString(4, encryptPin("1717"));
+						preparedStatement.executeQuery();
+
+
+						String sql2 = "insert into account (aid,cid,branch_name,balance,type,interest,status) values (?,?,?,?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql2);
+						preparedStatement.setInt(1,Integer.parseInt(id));
+						preparedStatement.setString(2, tin);
+						preparedStatement.setString(3, "BOA");
+						preparedStatement.setDouble(4, initialBalance);
+						preparedStatement.setString(5, "INTEREST_CHECKING");
+						preparedStatement.setFloat(6, 0.03f);
+						preparedStatement.setInt(7, 0);
+						preparedStatement.executeQuery();
+
+						addPrimary(tin, id);
+
+
+						result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
+
+					} else if (accountType == AccountType.STUDENT_CHECKING) {
+						String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql1);
+						preparedStatement.setString(1,tin);
+						preparedStatement.setString(2, name);
+						preparedStatement.setString(3, address);
+						preparedStatement.setString(4, encryptPin("1717"));
+						preparedStatement.executeQuery();
+
+						String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql2);
+						preparedStatement.setInt(1,Integer.parseInt(id));
+						preparedStatement.setString(2, tin);
+						preparedStatement.setString(3, "BOA");
+						preparedStatement.setDouble(4, initialBalance);
+						preparedStatement.setString(5, "STUDENT_CHECKING");
+						preparedStatement.setFloat(6, 0.00f);
+						preparedStatement.executeQuery();
+
+						addPrimary(tin, id);
+
+						result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
+
+					} else if (accountType == AccountType.SAVINGS) {
+						String sql1 = "insert into customer (cid,cname,address,pin) values (?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql1);
+						preparedStatement.setString(1,tin);
+						preparedStatement.setString(2, name);
+						preparedStatement.setString(3, address);
+						preparedStatement.setString(4, encryptPin("1717"));
+						preparedStatement.executeQuery();
+
+						String sql2 = "insert into account (aid, cid, branch_name, balance, type, interest) values (?,?,?,?,?,?)";
+						preparedStatement = _connection.prepareStatement(sql2);
+						preparedStatement.setInt(1,Integer.parseInt(id));
+						preparedStatement.setString(2, tin);
+						preparedStatement.setString(3, "BOA");
+						preparedStatement.setDouble(4, initialBalance);
+						preparedStatement.setString(5, "SAVINGS");
+						preparedStatement.setFloat(6, 0.048f);
+						preparedStatement.executeQuery();
+
+						addPrimary(tin, id);
+
+						result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
+
+					}
+					else {
+						result = "1";
+					}
+				}
+
+
 		}
 		catch( SQLException e )
 		{

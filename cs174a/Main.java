@@ -22,7 +22,7 @@ public class Main
 		App app = new App();                        // We need the default constructor of your App implementation.  Make sure such
 													// constructor exists.
 		String r = app.initializeSystem();          // We'll always call this function before testing your system.
-		app.uiMenu();
+		//app.uiMenu();
 
 
 
@@ -40,10 +40,11 @@ public class Main
 //			System.out.println( r );
 
 //			 Another example test.
-			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "111", 1234.56, "111", "adfasdf", "Known" );               ///done
-			System.out.println( r );
-//			r = app.createCheckingSavingsAccount( AccountType.INTEREST_CHECKING, "1221", 1234.56, "222", "adfasdf", "Known" );  /// done
+//			r = app.createCheckingSavingsAccount2( AccountType.SAVINGS, "111", 1234.56, "111", "adfasdf", "Known" );               ///done
 //			System.out.println( r );
+			r = app.createCheckingSavingsAccount3( AccountType.INTEREST_CHECKING, "44444", 140000, "9012", "aaa", "bbb" );  /// done
+			System.out.println( r );
+
 //			r = app.createCheckingSavingsAccount( AccountType.STUDENT_CHECKING, "78", 1234.56, "222", "adfasdf", "Known" );      // done
 //			System.out.println( r );
 //
@@ -60,7 +61,7 @@ public class Main
 //			r = app.setDate(2010, 10, 10);
 //			System.out.println(r);
 
-//			r = app.createCustomer("400651982", "Pit Wilson ", "new", "new");   /// done
+//			r = app.createCustomer("111", "Pit Wilson ", "new", "new");   /// done
 //			System.out.println(r);
 
 

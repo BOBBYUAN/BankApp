@@ -23,8 +23,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="111">
-              <caret line="68" column="52" selection-start-line="68" selection-start-column="52" selection-end-line="68" selection-end-column="52" />
+            <state relative-caret-position="333">
+              <caret line="47" column="87" lean-forward="true" selection-start-line="47" selection-start-column="87" selection-end-line="47" selection-end-column="87" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -35,8 +35,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cs174a/App.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
-              <caret line="914" column="66" lean-forward="true" selection-start-line="914" selection-start-column="66" selection-end-line="914" selection-end-column="66" />
+            <state relative-caret-position="340">
+              <caret line="402" column="16" selection-start-line="402" selection-start-column="16" selection-end-line="402" selection-end-column="16" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -47,8 +47,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="138">
-              <caret line="124" lean-forward="true" selection-start-line="124" selection-end-line="124" />
+            <state relative-caret-position="285">
+              <caret line="67" column="21" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -65,20 +65,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setDATE</find>
-      <find>closed accounts</find>
-      <find>deleteClosedA</find>
-      <find>deleteClose</find>
-      <find>status</find>
-      <find>closed</find>
-      <find>closedAccounts</find>
-      <find>update</find>
-      <find>deleteClosed</find>
-      <find>closedAccoun</find>
-      <find>getInt</find>
-      <find>deleteClosedAcc</find>
-      <find>deleteClos</find>
-      <find>closedAccount</find>
       <find>delete</find>
       <find>checkOwner</find>
       <find>closedAcc</find>
@@ -93,8 +79,22 @@
       <find>0.15</find>
       <find>withdrawl</find>
       <find>withdrawal</find>
+      <find>printReport</find>
       <find>accrueinterest</find>
+      <find>wire</find>
       <find>payfriend</find>
+      <find>accrue interest</find>
+      <find>system.out.println</find>
+      <find>getDate</find>
+      <find>11</find>
+      <find>pocketAccount</find>
+      <find>createPocketAccount</find>
+      <find>initia</find>
+      <find>uiMenu</find>
+      <find>createCustomer</find>
+      <find>createCheckingsAVINGSaCCOUNT</find>
+      <find>createChec</find>
+      <find>createcheckingsavingsaccount</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -121,10 +121,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="61" />
-    <option name="y" value="23" />
     <option name="width" value="1280" />
-    <option name="height" value="777" />
+    <option name="height" value="800" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -132,6 +130,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -153,7 +152,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -218,18 +216,19 @@
       <workItem from="1574584258041" duration="33328000" />
       <workItem from="1575231301853" duration="40171000" />
       <workItem from="1575441560124" duration="404000" />
-      <workItem from="1575512833701" duration="4165000" />
+      <workItem from="1575512833701" duration="8913000" />
+      <workItem from="1575597394952" duration="6290000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="97080000" />
+    <option name="totallyTimeSpent" value="108118000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2463651" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25040388" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -246,7 +245,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32876712" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49919224" visible="true" weight="0.5150685" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49919224" visible="true" weight="0.31917807" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50080776" side_tool="true" weight="0.48356164" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32868218" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -351,15 +350,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/Testable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="124" lean-forward="true" selection-start-line="124" selection-end-line="124" />
+        <state relative-caret-position="285">
+          <caret line="67" column="21" selection-start-line="67" selection-start-column="11" selection-end-line="67" selection-end-column="21" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/App.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="914" column="66" lean-forward="true" selection-start-line="914" selection-start-column="66" selection-end-line="914" selection-end-column="66" />
+        <state relative-caret-position="340">
+          <caret line="402" column="16" selection-start-line="402" selection-start-column="16" selection-end-line="402" selection-end-column="16" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -368,8 +367,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cs174a/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="68" column="52" selection-start-line="68" selection-start-column="52" selection-end-line="68" selection-end-column="52" />
+        <state relative-caret-position="333">
+          <caret line="47" column="87" lean-forward="true" selection-start-line="47" selection-start-column="87" selection-end-line="47" selection-end-column="87" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
