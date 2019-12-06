@@ -96,7 +96,6 @@ public class App implements Testable
 			System.out.println( "Database Username is: " + _connection.getUserName() );
 			System.out.println();
 
-			uiMenu();
 
 			return "0";
 		}
