@@ -73,11 +73,16 @@ public class Main
 			// For Fatal Castro
 //			r = app.createCustomer("41725", "401605312", "Fatal Castro", "3756 La Cumbre Plaza");  /// done
 //			System.out.println(r);
-//			r = app.createPocketAccount("67521", "19023", 100, "401605312");  /// done
+//			r = app.createPocketAccount("88888", "11111", 100, "666");  /// done
 //			System.out.println(r);
 
 			//------NOW SET NEW DATE START TRANSACTION
 
+//			r = app.createCheckingSavingsAccount( AccountType.SAVINGS, "11111", 2345, "666", "new", "3address" );               ///done
+//			System.out.println( r );
+
+			r = app.topUp( "88888", 100 );
+			System.out.println( r );
 
 
 

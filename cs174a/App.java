@@ -70,8 +70,8 @@ public class App implements Testable
 	{
 		// Some constants to connect to your DB.
 		final String DB_URL = "jdbc:oracle:thin:@cs174a.cs.ucsb.edu:1521/orcl";
-		final String DB_USER = "c##wangcheng";
-		final String DB_PASSWORD = "7429699";
+		final String DB_USER = "c##grousseva";
+		final String DB_PASSWORD = "8611311";
 
 		// Initialize your system.  Probably setting up the DB connection.
 		Properties info = new Properties();
@@ -169,7 +169,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
-				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 
 
 				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
@@ -194,7 +194,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
-				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 
 				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -218,7 +218,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
-				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 				//result = "successful";
@@ -266,7 +266,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
-				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 
 
 				result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
@@ -291,7 +291,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
-				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 
 				result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -315,7 +315,7 @@ public class App implements Testable
 				preparedStatement.executeQuery();
 
 				addPrimary(tin, id);
-				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+				addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 
 				result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 				//result = "successful";
@@ -369,7 +369,7 @@ public class App implements Testable
 
 						addPrimary(tin, id);
 
-						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 						result =  "0 " + id + " INTEREST_CHECKING " + initialBalance + " " + tin;
 
 
@@ -387,7 +387,7 @@ public class App implements Testable
 						preparedStatement.executeQuery();
 
 						addPrimary(tin, id);
-						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 
 						result =  "0 " + id + " STUDENT_CHECKING " + initialBalance + " " + tin;
 
@@ -404,7 +404,7 @@ public class App implements Testable
 						preparedStatement.executeQuery();
 
 						addPrimary(tin, id);
-						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, null, id, null);
+						addTransaction(this.getName(customerTaxID), "deposit", initialBalance, id, null, null);
 
 						result =  "0 " + id + " SAVINGS " + initialBalance + " " + tin;
 
@@ -982,15 +982,26 @@ public class App implements Testable
 				p.setString(1, parentId);
 				resultSet = p.executeQuery();
 
-				while (resultSet.next())
-				{
+				while (resultSet.next()) {
 					double parentBal = Double.parseDouble(resultSet.getString(1));
 					parentNewBal = parentBal - amount;
 
-					if (parentNewBal <= 0.01)
+					if (parentNewBal < 0.00)
 					{
-						//System.out.println("Not enough funds");
-						//return "1";
+						return "1";
+					}
+					else if (parentNewBal == 0.00 || parentBal == 0.01)
+					{
+						String u = "update account set status = 1 where aid = ?";
+						PreparedStatement preparedUpdateStatement = _connection.prepareStatement(u);
+						preparedUpdateStatement.setString(1, parentId);
+						preparedUpdateStatement.executeUpdate();
+
+						u = "update account set status = 1 where pocket_linked_to = ?";
+						preparedUpdateStatement = _connection.prepareStatement(u);
+						preparedUpdateStatement.setString(1, accountId);
+						preparedUpdateStatement.executeUpdate();
+						return "1";
 					}
 					else
 					{
@@ -1010,10 +1021,23 @@ public class App implements Testable
 
 						preparedUpdateStatement.executeUpdate();
 
-						addTransaction(this.getName(customerTaxID), "tops up", amount, parentId, accountId, null);
+						String s = "select cname from account a, owners o, customer c " +
+								"where a.aid = ? and o.aid = a.pocket_linked_to and o.primary = 0 and c.cid = o.cid";
+						PreparedStatement pp = _connection.prepareStatement(s);
+						pp.setString(1, accountId);
+						ResultSet rr = pp.executeQuery();
 
+						String n = "";
+						if(rr.next())
+						{
+							n = rr.getString(1);
+						}
+						else
+						{
+							return "1";
+						}
+						addTransaction(n, "tops up", amount, parentId, accountId, null);
 					}
-
 				}
 
 			}
@@ -1957,9 +1981,6 @@ public class App implements Testable
 
 						checkNumber = generateCheckNo();
 						String checkN = Integer.toString(checkNumber);
-
-						addTransaction(this.getName(customerTaxID), "writes a check", amount, accountId, null, checkN);
-
 					}
 
 				}
@@ -2987,9 +3008,7 @@ public class App implements Testable
 								System.out.print("How much you want to initialize? ");
 								initialBalance = sc.nextDouble();
 								createPocketAccount(aid, linked, initialBalance, customerTaxID);
-//								System.out.println(aid);
-//								System.out.println(linked);
-//								System.out.println(customerTaxID);
+
 								break;
 						}
 						break;
