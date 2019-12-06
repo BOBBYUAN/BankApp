@@ -2820,10 +2820,36 @@ public class App implements Testable
 
 	}
 
+
+	public String generateAllDTERS(String customerId)
+	{
+		try (Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+			String s = "select aid from owners o where o.cid = ? ";
+			PreparedStatement ps = _connection.prepareStatement(s);
+			ps.setString(1, customerId);
+			ResultSet resultSet = ps.executeQuery();
+
+			ArrayList<String> aids = new ArrayList<>();
+
+			while (resultSet.next()) {
+				aids.add(resultSet.getString(1));
+			}
+
+			for (String aid : aids) {
+				generateDTER(aid);
+			}
+			return "0";
+
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+			return "1";
+		}
+	}
+
 	public String generateDTER(String customerId)
 	{
 		try(Statement statement = _connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE) ) {
-			String s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.from_aid and o.cid = ? and o.primary = 0 and ttype='deposit'";
+			String s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.from_aid and o.aid = ? and o.primary = 0 and ttype='deposit'";
 			PreparedStatement ps = _connection.prepareStatement(s);
 			ps.setString(1, customerId);
 			ResultSet resultSet = ps.executeQuery();
@@ -2833,11 +2859,10 @@ public class App implements Testable
 			if (resultSet.next())
 			{
 				totalDeposit = (resultSet.getDouble("total_amount"));
-				System.out.println("TOTAL DEPOSIT");
 				System.out.println(Double.toString(totalDeposit));
 			}
 
-			s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.to_aid and o.cid = ? and o.primary = 0 and ttype='trasnfers'";
+			s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.to_aid and o.aid = ? and o.primary = 0 and ttype='trasnfers'";
 			ps = _connection.prepareStatement(s);
 			ps.setString(1, customerId);
 			resultSet = ps.executeQuery();
@@ -2847,11 +2872,10 @@ public class App implements Testable
 			if (resultSet.next())
 			{
 				totalTransfers = (resultSet.getDouble("total_amount"));
-				System.out.println("TOTAL Transfers");
 				System.out.println(Double.toString(totalTransfers));
 			}
 
-			s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.to_aid and o.cid = ? and o.primary = 0 and ttype='wires'";
+			s = "select sum(t.amount) as total_amount from owners o, transaction t where o.aid = t.to_aid and o.aid = ? and o.primary = 0 and ttype='wires'";
 			ps = _connection.prepareStatement(s);
 			ps.setString(1, customerId);
 			resultSet = ps.executeQuery();
@@ -2861,14 +2885,16 @@ public class App implements Testable
 			if (resultSet.next())
 			{
 				totalWires = (resultSet.getDouble("total_amount"));
-				System.out.println("TOTAL Wires");
 				System.out.println(Double.toString(totalWires));
 			}
 
+			System.out.println("TOTAL SUM");
+			System.out.println(totalDeposit + totalTransfers + totalWires);
 			if((totalDeposit + totalTransfers + totalWires) > 10000)
 			{
 				System.out.println(customerId);
 			}
+			System.out.println("---------------------------");
 			return "0";
 		}
 		catch(SQLException e)
@@ -2923,7 +2949,7 @@ public class App implements Testable
 				case 4:
 					System.out.print("Enter tax id: ");
 					customerTaxID = sc.next();
-					generateDTER(customerTaxID);
+					generateAllDTERS(customerTaxID);
 					break;
 				case 5:
 					System.out.print("Enter tax identification number: ");
